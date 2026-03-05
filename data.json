@@ -1,0 +1,29 @@
+[
+    {
+        "id": "HT-001",
+        "name": "Paws & Claws Premium Spa",
+        "lat": 20.2960, 
+        "lng": 85.8245,
+        "address": "Janpath Road, Bhubaneswar",
+        "image": "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=800&q=80",
+        "about": "Premium grooming, medicated bath, and styling for your beloved pets by certified professionals. We use only organic, pet-safe products."
+    },
+    {
+        "id": "HT-002",
+        "name": "Royal Tails Grooming",
+        "lat": 20.3588, 
+        "lng": 85.8333,
+        "address": "Patia, Bhubaneswar",
+        "image": "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=80",
+        "about": "Luxury spa treatments, nail clipping, and anti-tick baths for dogs and cats."
+    },
+    {
+        "id": "HT-003",
+        "name": "The Happy Snout Clinic",
+        "lat": 20.4625, 
+        "lng": 85.8828,
+        "address": "Cuttack Road, Odisha",
+        "image": "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=800&q=80",
+        "about": "Basic wash, hygiene trim, and regular health checkups by experienced vets."
+    }
+]
