@@ -3,223 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sai Computer Academy Project</title>
-    
+    <title>Hobtail - Premium Booking</title>
     <style>
-        /* Smooth Scrolling */
-        html { scroll-behavior: smooth; }
+        /* CSS Variables - Premium Navy Blue */
+        :root {
+            --bg-dark: #0F2247; 
+            --header-bg: #152A55; 
+            --card-bg: #1A3063;
+            --text-light: #F3F4F6;
+            --text-muted: #9CA3AF;
+            --accent-orange: #FF5E00; 
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0; padding: 0;
-            background-color: #0d1117; color: white; 
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding-top: 80px; 
+            padding-left: 20px;
+            padding-right: 20px;
+            overflow-x: hidden;
         }
 
-        /* Header - Blue Background */
-        header {
-            background-color: #0000FF; color: white;
-            padding: 30px 0; text-align: center;
+        /* Fixed Premium Header */
+        .app-header {
+            position: fixed; top: 0; left: 0; width: 100%; height: 70px;
+            background-color: var(--header-bg); display: flex;
+            justify-content: space-between; align-items: center; padding: 0 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08); z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* Nav Bar - Sky Blue */
-        nav {
-            background-color: #87CEEB; padding: 15px;
-            text-align: center; position: sticky; top: 0; z-index: 100;
+        .brand-block { display: flex; align-items: center; gap: 10px; }
+        .app-logo { width: 40px; height: 40px; object-fit: contain; }
+        .brand-name { font-size: 1.6rem; font-weight: bold; }
+        .brand-name span { color: var(--accent-orange); }
+
+        /* Location Action Bar */
+        .location-bar {
+            max-width: 1200px; margin: 20px auto 30px auto; display: flex;
+            justify-content: space-between; align-items: center;
+            background-color: var(--header-bg); padding: 15px 25px;
+            border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        nav a {
-            color: #1a2a6c; text-decoration: none;
-            margin: 0 15px; font-weight: bold;
-        }
-
-        /* Hero Section - Gradient Background */
-        .hero {
-            background: linear-gradient(to right, #1a2a6c, #b21f1f, #fdbb2d);
-            color: white; padding: 80px 20px; text-align: center;
-        }
-
-        .btn-group { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 20px; }
-
-        /* Courses - Black Background with Light Blue Cards */
-        .container { padding: 60px 20px; text-align: center; }
-        .courses { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-        .card {
-            background-color: #64b5f6; border-radius: 15px;
-            width: 300px; padding: 30px 20px; color: white;
-        }
-
-        /* About Us Section */
-        #about { padding: 80px 20px; text-align: center; }
-        .about-heading { color: #64b5f6; font-size: 2.8rem; margin-bottom: 5px; }
-        /* NEW: Orange Welcome Heading */
-        .welcome-heading { color: orange; font-size: 1.8rem; margin-bottom: 25px; font-weight: bold; }
-        .about-intro { max-width: 850px; margin: auto; line-height: 1.8; font-size: 1.1rem; margin-bottom: 40px;}
+        .user-status { font-size: 1rem; color: var(--text-muted); }
         
-        .feature-box { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-        .feature {
-            background: #161b22; padding: 25px; border-radius: 12px;
-            width: 240px; border-bottom: 4px solid #64b5f6; text-align: center;
+        .locate-btn {
+            background-color: transparent; color: var(--accent-orange);
+            border: 1px solid var(--accent-orange); padding: 10px 20px;
+            border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;
         }
-        .feature h4 { color: #64b5f6; margin-bottom: 12px; font-size: 1.2rem; }
-        .feature p { font-size: 0.95rem; color: #d1d5db; line-height: 1.5; }
+        .locate-btn:hover { background-color: var(--accent-orange); color: #fff; }
 
-        /* Contact Section - Updated with Email and WhatsApp */
-        #contact { padding: 80px 20px; text-align: center; border-top: 1px solid #333; }
-        .contact-card {
-            background: #161b22; max-width: 500px; margin: auto;
-            padding: 30px; border-radius: 15px; text-align: left;
+        /* Feed Grid */
+        .feed-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px; max-width: 1200px; margin: 0 auto;
         }
 
-        /* Green WhatsApp Button Style */
-        .btn-whatsapp {
-            background-color: #25D366; color: white;
-            text-decoration: none; display: inline-block;
-            padding: 12px 25px; border-radius: 8px;
-            font-weight: bold; margin-top: 20px;
-            border: none; cursor: pointer;
-            transition: 0.3s;
+        .store-card {
+            background-color: var(--card-bg); border-radius: 16px; overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05); transition: transform 0.3s ease;
         }
-        .btn-whatsapp:hover { background-color: #1ebe57; transform: scale(1.05); }
-
-        /* Forms Styling */
-        .modal-form {
-            display: none; position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); padding: 30px;
-            border-radius: 20px; z-index: 1000; width: 320px; text-align: center;
+        .store-card:hover { transform: translateY(-5px); border-color: rgba(255, 94, 0, 0.5); }
+        .card-image { width: 100%; height: 180px; object-fit: cover; }
+        .card-content { padding: 20px; }
+        .store-title { font-size: 1.2rem; margin-bottom: 5px; }
+        .distance-tag {
+            display: inline-block; background-color: rgba(255, 94, 0, 0.1);
+            color: var(--accent-orange); padding: 4px 10px; border-radius: 6px;
+            font-size: 0.85rem; font-weight: 600; margin-bottom: 15px;
         }
-        .input-form { background-color: white; color: #333; }
-        #successBox { background-color: #87CEEB; color: #1a2a6c; }
-        #errorBox { background-color: #ff4d4d; color: white; }
+        .view-btn {
+            width: 100%; background-color: transparent; color: var(--text-light);
+            border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px;
+            border-radius: 10px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;
+        }
+        .view-btn:hover { background-color: var(--accent-orange); border-color: var(--accent-orange); }
 
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;}
-        
-        .btn { padding: 12px 25px; border-radius: 8px; cursor: pointer; border: none; font-weight: bold; width: 260px; }
-        .btn-adm { background-color: #1a2a6c; color: white; }
-        .btn-free { background-color: #fdbb2d; color: #333; }
+        /* Detail Page */
+        #detail-view { display: none; max-width: 800px; margin: 0 auto; padding-bottom: 50px; }
+        .back-btn { background: transparent; color: var(--text-light); border: none; font-size: 1.1rem; cursor: pointer; margin-bottom: 20px; }
+        .back-btn:hover { color: var(--accent-orange); }
+        .detail-hero-img { width: 100%; height: 300px; object-fit: cover; border-radius: 16px; margin-bottom: 20px; }
+        .slot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; margin-top: 20px; }
+        .time-slot { background-color: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); padding: 15px; text-align: center; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .time-slot:hover { background-color: var(--accent-orange); border-color: var(--accent-orange); }
+
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Sai Computer Academy</h1>
-        <p>Your Gateway to the Digital World</p>
+    <header class="app-header" id="main-header">
+        <div class="brand-block">
+            <img src="https://hobtail.com/images/hobtail-logo-premium.png" alt="Logo" class="app-logo" onerror="this.style.display='none'">
+            <div class="brand-name">Hob<span>tail</span></div>
+        </div>
+        <div style="color: var(--text-muted); font-size: 0.9rem;" id="header-loc">📍 Odisha</div>
     </header>
 
-    <nav>
-        <a href="#">Home</a>
-        <a href="#courses">Courses</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-    </nav>
-
-    <section class="hero">
-        <h2>Become a Professional Expert</h2>
-        <p>Master latest technologies with our expert coaching.</p>
-        <div class="btn-group">
-            <button class="btn btn-adm" onclick="showForm('admissionForm')">Admission Registration</button>
-            <button class="btn btn-free" onclick="showForm('computerForm')">Free Computer Offer</button>
+    <div id="main-content">
+        <div class="location-bar">
+            <span class="user-status" id="status-text">Loading data...</span>
+            <button class="locate-btn" onclick="getUserLocation()">📍 Detect My Location</button>
         </div>
+        <main class="feed-container" id="feed-view"></main>
+    </div>
+
+    <section id="detail-view">
+        <button class="back-btn" onclick="goBack()">← Back to Feed</button>
+        <div id="detail-content"></div>
     </section>
-
-    <div class="container" id="courses">
-        <h2 style="font-size: 2.2rem; margin-bottom: 40px;">Our Specialized Courses</h2>
-        <div class="courses">
-            <div class="card">
-                <h3>Basic Computer</h3>
-                <p>Learn Windows, MS Word, Excel, and PowerPoint from scratch.</p>
-                <button class="btn btn-adm" style="width: auto;" onclick="showForm('admissionForm')">Join Now</button>
-            </div>
-            <div class="card">
-                <h3>Tally Prime</h3>
-                <p>Master professional accounting and GST management.</p>
-                <button class="btn btn-adm" style="width: auto;" onclick="showForm('admissionForm')">Join Now</button>
-            </div>
-        </div>
-    </div>
-
-    <section id="about">
-        <h2 class="about-heading">About Us</h2>
-        <div class="welcome-heading">Welcome to Sai Computer Academy</div>
-        
-        <div class="about-intro">
-            <p>We are a premier computer education institute committed to empowering students with advanced technical skills. Our mission is to provide high-quality education integrated with hands-on practical experience for every learner.</p>
-        </div>
-        
-        <div class="feature-box">
-            <div class="feature">
-                <h4>Experience Teacher</h4>
-                <p>Best teaching for you.</p>
-            </div>
-            <div class="feature">
-                <h4>Modern Computer Lab</h4>
-                <p>Access to a well-equipped lab with the latest technology.</p>
-            </div>
-            <div class="feature">
-                <h4>Accredited Certification</h4>
-                <p>Government-recognized certificates to boost your career.</p>
-            </div>
-            <div class="feature">
-                <h4>Affordable Excellence</h4>
-                <p>Professional courses at highly competitive and accessible prices.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="contact">
-        <h2 style="color: #64b5f6; font-size: 2.5rem; margin-bottom: 30px;">Contact Us</h2>
-        <div class="contact-card">
-            <p style="margin: 10px 0;"><strong>📍 Address:</strong> Sai Computer Academy, Near Main Market, Your City</p>
-            <p style="margin: 10px 0;"><strong>📞 Phone:</strong> +91 9876543210</p>
-            <p style="margin: 10px 0;"><strong>✉️ Email:</strong> info@saicomputeracademy.com</p>
-            
-            <a href="https://wa.me/919876543210" target="_blank" class="btn-whatsapp">
-                📲 Contact for WhatsApp
-            </a>
-        </div>
-    </section>
-
-    <div id="admissionForm" class="modal-form input-form">
-        <h2>Admission Form</h2>
-        <div style="background: #f1f1f1; padding: 10px; border-radius: 8px; font-weight: bold; color: #b21f1f; margin-bottom: 15px;">Price: ₹5500</div>
-        <input type="text" placeholder="Full Name" id="name1">
-        <input type="tel" placeholder="Mobile Number" id="phone1" maxlength="10">
-        <button class="btn btn-adm" style="width: 100%;" onclick="submitData('name1', 'phone1')">Submit</button>
-        <p onclick="hideAllForms()" style="cursor:pointer; color:red; margin-top:10px;">Close</p>
-    </div>
-
-    <div id="computerForm" class="modal-form input-form">
-        <h2>Free Computer Offer</h2>
-        <span style="font-size: 50px; display: block; margin: 10px 0;">🖥️</span>
-        <div style="background: #f1f1f1; padding: 10px; border-radius: 8px; font-weight: bold; color: #b21f1f; margin-bottom: 15px;">Price: ₹12000</div>
-        <input type="text" placeholder="Full Name" id="name2">
-        <input type="tel" placeholder="Mobile Number" id="phone2" maxlength="10">
-        <button class="btn btn-adm" style="width: 100%;" onclick="submitData('name2', 'phone2')">Register Now</button>
-        <p onclick="hideAllForms()" style="cursor:pointer; color:red; margin-top:10px;">Close</p>
-    </div>
-
-    <div id="successBox" class="modal-form">
-        <h2 style="color: #28a745;">Success!</h2>
-        <p>You will be contacted within 24 hours.</p>
-        <button class="btn" style="background:#28a745; color:white; width:100%;" onclick="hideAllForms()">OK</button>
-    </div>
-
-    <div id="errorBox" class="modal-form">
-        <h2>Error!</h2>
-        <p>Enter valid Name and 10-digit number.</p>
-        <button class="btn" style="background:white; color:#ff4d4d; width:100%;" onclick="hideAllForms()">Try Again</button>
-    </div>
 
     <script>
-        function showForm(id) { hideAllForms(); document.getElementById(id).style.display = 'block'; }
-        function hideAllForms() {
-            ['admissionForm', 'computerForm', 'successBox', 'errorBox'].forEach(id => document.getElementById(id).style.display = 'none');
+        let storesData = []; // Blank array, data.json se bharega
+
+        // Step 1: Fetch API - Real Data load karna
+        async function loadRealData() {
+            try {
+                const response = await fetch('data.json');
+                storesData = await response.json();
+                
+                // Default distance add kar do
+                storesData.forEach(store => store.distance = "Calculating...");
+                
+                document.getElementById('status-text').innerText = "Data loaded successfully.";
+                renderFeed();
+            } catch (error) {
+                console.error("Error loading JSON:", error);
+                document.getElementById('status-text').innerText = "Database connection failed.";
+            }
         }
-        function submitData(nId, pId) {
-            let n = document.getElementById(nId).value;
-            let p = document.getElementById(pId).value;
-            if(n.trim() === "" || p.length !== 10) { showForm('errorBox'); } 
-            else { showForm('successBox'); }
+
+        // Step 2: UI Render Logic
+        const feedView = document.getElementById('feed-view');
+        
+        function renderFeed() {
+            feedView.innerHTML = '';
+            storesData.forEach(store => {
+                let displayDistance = store.distance;
+                if(displayDistance !== "Calculating...") {
+                    displayDistance = displayDistance + " km away";
+                }
+
+                feedView.innerHTML += `
+                    <article class="store-card">
+                        <img src="${store.image}" alt="${store.name}" class="card-image">
+                        <div class="card-content">
+                            <h3 class="store-title">${store.name}</h3>
+                            <span class="distance-tag">${displayDistance}</span>
+                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">${store.address}</p>
+                            <button class="view-btn" onclick="openDetails('${store.id}')">View Details</button>
+                        </div>
+                    </article>
+                `;
+            });
         }
+
+        // Step 3: Location Engine
+        function getUserLocation() {
+            document.getElementById('status-text').innerText = "Finding your location...";
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(processLocation, showError);
+            } else {
+                document.getElementById('status-text').innerText = "GPS not supported by your browser.";
+            }
+        }
+
+        function processLocation(position) {
+            const userLat = position.coords.latitude;
+            const userLng = position.coords.longitude;
+            document.getElementById('status-text').innerText = "Sorting nearest centers...";
+            document.getElementById('header-loc').innerText = "📍 GPS Active";
+
+            storesData.forEach(store => {
+                store.distance = calculateDistance(userLat, userLng, store.lat, store.lng).toFixed(1);
+            });
+
+            storesData.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+            renderFeed();
+            document.getElementById('status-text').innerText = "Showing nearest centers.";
+        }
+
+        // Haversine Formula (Math Logic)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; 
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c; 
+        }
+
+        function showError(error) {
+            document.getElementById('status-text').innerText = "Please Allow Location Access.";
+            console.error(error);
+        }
+
+        // Step 4: SPA Logic (Detail Page)
+        function openDetails(storeId) {
+            const store = storesData.find(s => s.id === storeId);
+            const detailContent = document.getElementById('detail-content');
+            
+            detailContent.innerHTML = `
+                <img src="${store.image}" class="detail-hero-img">
+                <h1 style="font-size: 2.2rem; margin-bottom: 10px;">${store.name}</h1>
+                <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 1.1rem;">📍 ${store.address}</p>
+                <p style="line-height: 1.6; margin-bottom: 40px; color: var(--text-light);">${store.about}</p>
+                <h3 style="margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Select Booking Slot</h3>
+                <div class="slot-grid">
+                    <div class="time-slot" onclick="alert('Slot Selected!')">10:00 AM</div>
+                    <div class="time-slot" onclick="alert('Slot Selected!')">01:30 PM</div>
+                </div>
+            `;
+
+            document.getElementById('main-content').style.display = 'none'; 
+            document.getElementById('detail-view').style.display = 'block'; 
+            window.scrollTo(0, 0); 
+        }
+
+        function goBack() {
+            document.getElementById('detail-view').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        // Start App
+        loadRealData();
     </script>
 </body>
 </html>
