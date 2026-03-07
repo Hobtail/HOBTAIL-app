@@ -83,14 +83,32 @@
         }
         .view-btn:hover { background-color: var(--accent-orange); border-color: var(--accent-orange); }
 
-        /* Detail Page */
-        #detail-view { display: none; max-width: 800px; margin: 0 auto; padding-bottom: 50px; }
-        .back-btn { background: transparent; color: var(--text-light); border: none; font-size: 1.1rem; cursor: pointer; margin-bottom: 20px; }
-        .back-btn:hover { color: var(--accent-orange); }
-        .detail-hero-img { width: 100%; height: 300px; object-fit: cover; border-radius: 16px; margin-bottom: 20px; }
-        .slot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; margin-top: 20px; }
-        .time-slot { background-color: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); padding: 15px; text-align: center; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        .time-slot:hover { background-color: var(--accent-orange); border-color: var(--accent-orange); }
+        /* Zomato Style Bottom Sheet */
+        .bottom-sheet-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); z-index: 1999;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease;
+            backdrop-filter: blur(3px);
+        }
+        .bottom-sheet {
+            position: fixed; bottom: -100%; left: 0; width: 100%;
+            max-height: 85vh; background-color: var(--card-bg);
+            border-radius: 24px 24px 0 0; z-index: 2000;
+            padding: 20px 20px 40px 20px; overflow-y: auto;
+            transition: bottom 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
+        }
+        /* Active States (जब स्लाइड ओपन होगा) */
+        .bottom-sheet-overlay.active { opacity: 1; visibility: visible; }
+        .bottom-sheet.active { bottom: 0; }
+        
+        /* छोटे डिज़ाइन एलिमेंट्स */
+        .sheet-drag-handle { width: 50px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 5px; margin: 0 auto 20px auto; }
+        .close-btn { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: none; color: white; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+        .close-btn:hover { background: var(--accent-orange); }
+        .detail-hero-img { width: 100%; height: 220px; object-fit: cover; border-radius: 16px; margin-bottom: 15px; }
+        .premium-tag { background: rgba(255,94,0,0.1); color: var(--accent-orange); padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; display: inline-block; margin-bottom: 15px; border: 1px solid rgba(255,94,0,0.3); }
+        .book-btn { width: 100%; background: var(--accent-orange); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(255, 94, 0, 0.4); }
 
     </style>
 </head>
@@ -112,10 +130,12 @@
         <main class="feed-container" id="feed-view"></main>
     </div>
 
-    <section id="detail-view">
-        <button class="back-btn" onclick="goBack()">← Back to Feed</button>
+    <div class="bottom-sheet-overlay" id="sheet-overlay" onclick="closeDetails()"></div>
+    <div class="bottom-sheet" id="bottom-sheet">
+        <div class="sheet-drag-handle"></div>
+        <button class="close-btn" onclick="closeDetails()">✕</button>
         <div id="detail-content"></div>
-    </section>
+    </div>
 
     <script>
                 let storesData = []; // Blank array, अब ये सीधा Google Sheet से भरेगा
@@ -246,32 +266,38 @@
             console.error(error);
         }
 
-        // Step 4: SPA Logic (Detail Page)
+        // Step 4: Zomato Style Bottom Sheet Logic
         function openDetails(storeId) {
             const store = storesData.find(s => s.id === storeId);
             const detailContent = document.getElementById('detail-content');
             
+            // यहाँ हम अंदर का कंटेंट डिज़ाइन कर रहे हैं
             detailContent.innerHTML = `
                 <img src="${store.image}" class="detail-hero-img">
-                <h1 style="font-size: 2.2rem; margin-bottom: 10px;">${store.name}</h1>
-                <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 1.1rem;">📍 ${store.address}</p>
-                <p style="line-height: 1.6; margin-bottom: 40px; color: var(--text-light);">${store.about}</p>
-                <h3 style="margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Select Booking Slot</h3>
-                <div class="slot-grid">
-                    <div class="time-slot" onclick="alert('Slot Selected!')">10:00 AM</div>
-                    <div class="time-slot" onclick="alert('Slot Selected!')">01:30 PM</div>
-                </div>
+                <h1 style="font-size: 1.8rem; margin-bottom: 5px;">${store.name}</h1>
+                <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 15px;">📍 ${store.address}</p>
+                
+                <div class="premium-tag">⭐ Verified Partner • ${store.distance} km away</div>
+                
+                <h3 style="margin-bottom: 10px; font-size: 1.2rem;">About Clinic</h3>
+                <p style="line-height: 1.6; margin-bottom: 25px; color: var(--text-light); font-size: 0.95rem;">
+                    We provide top-quality care, grooming, and medical checkups for your beloved pets. Book an appointment today for a premium experience!
+                </p>
+                
+                <button class="book-btn" onclick="alert('Booking feature coming soon!')">Book Appointment</button>
             `;
 
-            document.getElementById('main-content').style.display = 'none'; 
-            document.getElementById('detail-view').style.display = 'block'; 
-            window.scrollTo(0, 0); 
+            // स्लाइड को ऊपर लाने का जादू
+            document.getElementById('sheet-overlay').classList.add('active');
+            document.getElementById('bottom-sheet').classList.add('active');
+            document.body.style.overflow = 'hidden'; // पीछे का पेज स्क्रॉल होना बंद हो जाएगा
         }
 
-        function goBack() {
-            document.getElementById('detail-view').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-            window.scrollTo(0, 0);
+        function closeDetails() {
+            // स्लाइड को वापस नीचे भेजने का जादू
+            document.getElementById('sheet-overlay').classList.remove('active');
+            document.getElementById('bottom-sheet').classList.remove('active');
+            document.body.style.overflow = 'auto'; // पीछे का पेज फिर से स्क्रॉल होने लगेगा
         }
 
         // Start App
