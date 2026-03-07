@@ -98,7 +98,7 @@
 
     <header class="app-header" id="main-header">
         <div class="brand-block">
-            <img src="./logo.jpg" alt="Logo" class="app-logo">
+            <img src="https://hobtail.com/images/hobtail-logo-premium.png" alt="Logo" class="app-logo" onerror="this.style.display='none'">
             <div class="brand-name">Hob<span>tail</span></div>
         </div>
         <div style="color: var(--text-muted); font-size: 0.9rem;" id="header-loc">📍 Odisha</div>
@@ -118,24 +118,68 @@
     </section>
 
     <script>
-        let storesData = []; // Blank array, data.json se bharega
+                let storesData = []; // Blank array, अब ये सीधा Google Sheet से भरेगा
 
-        // Step 1: Fetch API - Real Data load karna
+        // तुम्हारा लाइव ऑटोमैटिक डेटाबेस लिंक
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRxrwy4EBjdHPkLHaSBt-fN7OC12iuAecz8N76kHM3CP1qpEL9TbVpLbYKu_ICYrlocn2m2SbURuN1Z/pub?output=csv';
+
+        // Step 1: Fetch API - Live Google Sheet Load Engine
         async function loadRealData() {
             try {
-                const response = await fetch('data.json');
-                storesData = await response.json();
+                document.getElementById('status-text').innerText = "Syncing Live Database...";
+                const response = await fetch(sheetUrl);
+                const csvText = await response.text();
                 
-                // Default distance add kar do
+                // जादुई ट्रांसलेटर जो CSV को JSON में बदलेगा
+                storesData = csvToJson(csvText);
+                
+                // Default distance ऐड कर दो
                 storesData.forEach(store => store.distance = "Calculating...");
                 
-                document.getElementById('status-text').innerText = "Data loaded successfully.";
+                document.getElementById('status-text').innerText = "Live Data loaded successfully.";
                 renderFeed();
             } catch (error) {
-                console.error("Error loading JSON:", error);
+                console.error("Error loading Live Database:", error);
                 document.getElementById('status-text').innerText = "Database connection failed.";
             }
         }
+
+        // CSV to JSON Translator (प्रो-हैक: यह एड्रेस के कॉमा को भी सही से हैंडल करेगा)
+        function csvToJson(csv) {
+            const lines = csv.split(/\r?\n/);
+            const result = [];
+            const headers = lines[0].split(',');
+
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                let obj = {};
+                let currentline = [];
+                let inQuotes = false;
+                let val = '';
+                
+                for (let char of lines[i]) {
+                    if (char === '"') inQuotes = !inQuotes;
+                    else if (char === ',' && !inQuotes) {
+                        currentline.push(val);
+                        val = '';
+                    } else {
+                        val += char;
+                    }
+                }
+                currentline.push(val);
+
+                for (let j = 0; j < headers.length; j++) {
+                    let header = headers[j] ? headers[j].trim() : "";
+                    let value = currentline[j] ? currentline[j].trim() : "";
+                    // एक्स्ट्रा इन्वर्टेड कॉमा हटाना
+                    if (value.startsWith('"') && value.endsWith('"')) value = value.slice(1, -1);
+                    if (header) obj[header] = value;
+                }
+                result.push(obj);
+            }
+            return result;
+        }
+
 
         // Step 2: UI Render Logic
         const feedView = document.getElementById('feed-view');
