@@ -293,6 +293,15 @@
                     if (value.startsWith('"') && value.endsWith('"')) value = value.slice(1, -1);
                     if (header) obj[header] = value;
                 }
+
+                if (currentline.length > 7) {
+                    let coverValue = currentline[7] ? currentline[7].trim() : '';
+                    if (coverValue.startsWith('"') && coverValue.endsWith('"')) {
+                        coverValue = coverValue.slice(1, -1);
+                    }
+                    obj.cover = coverValue;
+                }
+                
                 result.push(obj);
             }
             return result;
