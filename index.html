@@ -268,14 +268,11 @@
                         getUserLocation();
                     } else {
                         resetLocationState();
-                        showLocationPrompt();
                     }
                 } catch(e) {
                     // console.log("Permission API not supported. Asking directly.");
                     getUserLocation();
                 }
-            } else if (!lastKnownLocation) {
-                setTimeout(showLocationPrompt, 1000);
             }
         }
 
@@ -439,6 +436,10 @@
         }
 
         function openDetails(storeId) {
+            if (!userHasUsedLocation) {
+                showLocationPrompt();
+                return;
+            }
             const store = storesData.find(s => s.id === storeId);
             if (!store) return;
             const detailContent = document.getElementById('detail-content');
