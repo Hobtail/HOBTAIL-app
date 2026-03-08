@@ -80,7 +80,7 @@
         }
         
         .locate-btn svg {
-            fill: currentColor;
+            stroke: currentColor;
         }
 
         /* Feed Grid */
@@ -161,10 +161,10 @@
     <div id="main-content">
         <div class="location-bar">
             <span class="user-status" id="status-text">Loading data...</span>
-            <button class="locate-btn" onclick="getUserLocation()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
-                    <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
-                    <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 010-1.186l4.25-7.363a1.651 1.651 0 112.86 1.664l-4.25 7.363a1.651 1.651 0 01-2.86-1.664zM19.336 10.59a1.651 1.651 0 01-2.86 1.664l-4.25-7.363a1.651 1.651 0 112.86-1.664l4.25 7.363z" clip-rule="evenodd" />
+            <button class="locate-btn" onclick="requestLocationFromModal()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <circle cx="12" cy="12" r="3"></circle>
                 </svg>
                 Detect My Location
             </button>
