@@ -312,7 +312,7 @@
 
                 feedView.innerHTML += `
                     <article class="store-card">
-                        <img src="${store.image}" alt="${store.name}" class="card-image">
+                        <img src="${store.cover}" alt="${store.name}" class="card-image" onerror="this.style.display='none'">
                         <div class="card-content">
                             <h3 class="store-title">${store.name}</h3>
                             <span class="distance-tag">${displayDistance}</span>
