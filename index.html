@@ -46,6 +46,8 @@
             justify-content: space-between; align-items: center;
             background-color: var(--header-bg); padding: 15px 25px;
             border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    		will-change: transform, opacity;
         }
 
         .user-status { font-size: 1rem; color: var(--text-muted); }
@@ -220,16 +222,21 @@
 
         .modal-box {
             position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
+            transform: translate(-50%, -50%) scale(0.2);
             width: 90%; max-width: 400px;
             background: var(--card-bg);
             border-radius: 16px;
             padding: 30px;
             z-index: 3000;
             opacity: 0; visibility: hidden;
-            transition: all 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, visibility 0s 0.4s;
+    		will-change: transform, opacity;
         }
-        .modal-box.active { transform: translate(-50%, -50%) scale(1); opacity: 1; visibility: visible; }
+        .modal-box.active {
+			transform: translate(-50%, -50%) scale(1);
+			opacity: 1; visibility: visible;
+			transition-delay: 0s;
+		}
         .modal-title { font-size: 1.4rem; margin-bottom: 10px; }
         .modal-text { font-size: 1rem; color: var(--text-muted); margin-bottom: 25px; }
         .modal-btn {
@@ -239,13 +246,16 @@
 
         /* Location Bar Animation */
         .location-bar.hidden {
-            transition: all 0.5s ease;
-            opacity: 0;
-            transform: scale(0.8);
-            height: 0;
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, height 0s 0.4s, padding 0s 0.4s, margin 0s 0.4s;
+			transform: scale(0.2);
+			opacity: 0;
+			height: 0;
+			padding-top: 0;
+			padding-bottom: 0;
+			margin-top: 0;
+			margin-bottom: 0;
+			overflow: hidden;
+			border-width: 0;
         }
 
     </style>
@@ -257,7 +267,12 @@
 <img src="logo.jpg" alt="Logo" class="app-logo">
             <div class="brand-name">Hob<span>tail</span></div>
         </div>
-        <div style="color: var(--text-muted); font-size: 0.9rem;" id="header-loc">📍 Odisha</div>
+        <div id="header-loc" style="display: flex; align-items: center; gap: 8px;">
+			<svg id="header-gps-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22" style="color: var(--text-muted); transition: color 0.3s ease;">
+				<path d="M12 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm0-10c-4.42 0-8 3.58-8 8 0 4.95 6.48 12.12 7.35 13.15.22.26.54.4.85.4s.63-.14.85-.4C13.52 20.12 20 16.95 20 10c0-4.42-3.58-8-8-8zm0 17.38c-1.57-1.8-5.83-6.9-5.83-9.38 0-3.21 2.62-5.83 5.83-5.83s5.83 2.62 5.83 5.83c0 2.48-4.26 7.58-5.83 9.38z"></path>
+			</svg>
+			<span id="header-loc-text" style="color: var(--text-muted); font-size: 0.9rem; transition: color 0.3s ease;">Odisha</span>
+		</div>
     </header>
 
     <div id="main-content">
@@ -296,8 +311,21 @@
             localStorage.removeItem('lastKnownLocation');
             userHasUsedLocation = false;
 
-            document.getElementById('header-loc').innerText = '📍 Odisha';
-            document.querySelector('.location-bar').classList.remove('hidden');
+            document.getElementById('header-loc-text').innerText = 'Odisha';
+			const gpsIcon = document.getElementById('header-gps-icon');
+			if(gpsIcon) {
+				gpsIcon.style.color = 'var(--text-muted)';
+				gpsIcon.parentElement.querySelector('#header-loc-text').style.color = 'var(--text-muted)';
+			}
+
+            const locationBar = document.querySelector('.location-bar');
+			const icon = document.getElementById('header-gps-icon');
+			if (locationBar && icon) {
+				const iconRect = icon.getBoundingClientRect();
+				const originX = iconRect.left + iconRect.width / 2;
+				locationBar.style.transformOrigin = `${originX}px 0px`;
+			}
+			locationBar.classList.remove('hidden');
 
             if (storesData.length > 0) {
                 storesData.forEach(store => store.distance = "Calculating...");
@@ -373,7 +401,8 @@
         }
 
         function csvToJson(csv) {
-            const lines = csv.split(/\r?\n/);
+            const lines = csv.split(/?
+/);
             const result = [];
             const headers = lines[0].split(',');
 
@@ -459,13 +488,26 @@
                 const city = geoData.address.city || geoData.address.town || geoData.address.village || 'Your Area';
                 lastKnownLocation = city;
                 localStorage.setItem('lastKnownLocation', city);
-                document.getElementById('header-loc').innerText = `📍 ${city}`;
+                document.getElementById('header-loc-text').innerText = city;
+				const gpsIcon = document.getElementById('header-gps-icon');
+				if (gpsIcon) {
+					gpsIcon.style.color = 'var(--accent-orange)';
+					gpsIcon.parentElement.querySelector('#header-loc-text').style.color = 'var(--text-light)';
+				}
             } catch (e) {
                 console.error("Reverse geocoding failed", e);
                 document.getElementById('header-loc').innerText = "📍 GPS Active"; // Fallback
             }
 
-            document.querySelector('.location-bar').classList.add('hidden');
+            const locationBar = document.querySelector('.location-bar');
+			const icon = document.getElementById('header-gps-icon');
+			if (locationBar && icon) {
+				const iconRect = icon.getBoundingClientRect();
+				const barRect = locationBar.getBoundingClientRect();
+				const originX = ((iconRect.left + iconRect.width / 2) - barRect.left) / barRect.width * 100;
+				locationBar.style.transformOrigin = `${originX}% 0%`;
+			}
+			locationBar.classList.add('hidden');
 
             storesData.forEach(store => {
                 store.distance = calculateDistance(userLat, userLng, store.lat, store.lng).toFixed(1);
@@ -579,8 +621,18 @@
         }
         
         function showLocationPrompt() {
-            document.getElementById('location-modal-overlay').classList.add('active');
-            document.getElementById('location-modal-box').classList.add('active');
+            const modalBox = document.getElementById('location-modal-box');
+			const icon = document.getElementById('header-gps-icon');
+			if (!modalBox || !icon) return;
+
+			const iconRect = icon.getBoundingClientRect();
+			const originX = iconRect.left + iconRect.width / 2;
+			const originY = iconRect.top + iconRect.height / 2;
+
+			modalBox.style.transformOrigin = `${originX}px ${originY}px`;
+
+			document.getElementById('location-modal-overlay').classList.add('active');
+			modalBox.classList.add('active');
         }
 
         function closeLocationPrompt() {
