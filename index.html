@@ -397,7 +397,7 @@
                 }
                  if (currentline.length > 7) {
                     let coverValue = currentline[7] ? currentline[7].trim() : '';
-                    if (coverValue.startsWith("'") && coverValue.endsWith("'")) {
+                    if (coverValue.startsWith('"') && coverValue.endsWith('"')) {
                         coverValue = coverValue.slice(1, -1);
                     }
                     obj.cover = coverValue;
@@ -592,7 +592,7 @@
             const sheetOverlay = document.getElementById('sheet-overlay');
             const bottomSheet = document.getElementById('bottom-sheet');
             
-            if (sheetOverlay.classList..contains('active')) {
+            if (sheetOverlay.classList.contains('active')) {
                 sheetOverlay.classList.remove('active');
                 bottomSheet.classList.remove('active');
                 document.body.style.overflow = 'auto'; 
