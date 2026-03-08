@@ -40,7 +40,7 @@
         .brand-name { font-size: 1.6rem; font-weight: bold; }
         .brand-name span { color: var(--accent-orange); }
 
-        /* Location Action Bar */0
+        /* Location Action Bar */
         .location-bar {
             max-width: 1200px; margin: 20px auto 30px auto; display: flex;
             justify-content: space-between; align-items: center;
@@ -363,7 +363,7 @@
                 }
                  if (currentline.length > 7) {
                     let coverValue = currentline[7] ? currentline[7].trim() : '';
-                    if (coverValue.startsWith(''') && coverValue.endsWith(''')) {
+                    if (coverValue.startsWith("'") && coverValue.endsWith("'")) {
                         coverValue = coverValue.slice(1, -1);
                     }
                     obj.cover = coverValue;
