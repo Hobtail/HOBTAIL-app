@@ -215,28 +215,39 @@
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7); z-index: 2999;
-            opacity: 0; visibility: hidden; transition: all 0.3s ease;
+            opacity: 0; visibility: hidden; 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             backdrop-filter: blur(3px);
         }
         .modal-overlay.active { opacity: 1; visibility: visible; }
 
         .modal-box {
-            position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0.2);
-            width: 90%; max-width: 400px;
+            position: fixed; 
+            top: 50%; 
+            left: 50%;
+            width: 90%; 
+            max-width: 400px;
             background: var(--card-bg);
             border-radius: 16px;
             padding: 30px;
             z-index: 3000;
-            opacity: 0; visibility: hidden;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, visibility 0s 0.4s;
-    		will-change: transform, opacity;
+
+            /* Hidden State */
+            transform: translate(-50%, -50%) scale(0.5);
+            opacity: 0; 
+            visibility: hidden;
+
+            /* Premium Animation */
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, opacity;
         }
+
         .modal-box.active {
-			transform: translate(-50%, -50%) scale(1);
-			opacity: 1; visibility: visible;
-			transition-delay: 0s;
-		}
+            /* Active State */
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1; 
+            visibility: visible;
+        }
         .modal-title { font-size: 1.4rem; margin-bottom: 10px; }
         .modal-text { font-size: 1rem; color: var(--text-muted); margin-bottom: 25px; }
         .modal-btn {
@@ -625,18 +636,22 @@
         }
         
         function showLocationPrompt() {
+            const modalOverlay = document.getElementById('location-modal-overlay');
             const modalBox = document.getElementById('location-modal-box');
-			const icon = document.getElementById('header-gps-icon');
-			if (!modalBox || !icon) return;
+            const icon = document.getElementById('header-gps-icon');
+            if (!modalOverlay || !modalBox || !icon) return;
 
-			const iconRect = icon.getBoundingClientRect();
-			const originX = iconRect.left + iconRect.width / 2;
-			const originY = iconRect.top + iconRect.height / 2;
+            // Dynamic Origin: Get the GPS icon's exact on-screen position.
+            const iconRect = icon.getBoundingClientRect();
+            const originX = iconRect.left + iconRect.width / 2;
+            const originY = iconRect.top + iconRect.height / 2;
 
-			modalBox.style.transformOrigin = `${originX}px ${originY}px`;
+            // Set the transform-origin of the popup to the icon's center *before* animation.
+            modalBox.style.transformOrigin = `${originX}px ${originY}px`;
 
-			document.getElementById('location-modal-overlay').classList.add('active');
-			modalBox.classList.add('active');
+            // Add 'active' classes to trigger the CSS transition.
+            modalOverlay.classList.add('active');
+            modalBox.classList.add('active');
         }
 
         function closeLocationPrompt() {
