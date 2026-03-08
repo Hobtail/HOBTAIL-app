@@ -361,7 +361,12 @@
             listenForLocationChanges();
 
             if (lastKnownLocation) {
-                document.getElementById('header-loc').innerText = `📍 ${lastKnownLocation}`;
+                document.getElementById('header-loc-text').innerText = lastKnownLocation;
+                const gpsIcon = document.getElementById('header-gps-icon');
+                if (gpsIcon) {
+                    gpsIcon.style.color = 'var(--accent-orange)';
+                    gpsIcon.parentElement.querySelector('#header-loc-text').style.color = 'var(--text-light)';
+                }
             }
 
             await loadRealData();
@@ -401,8 +406,7 @@
         }
 
         function csvToJson(csv) {
-            const lines = csv.split(/?
-/);
+            const lines = csv.split(/\r?\n/);
             const result = [];
             const headers = lines[0].split(',');
 
