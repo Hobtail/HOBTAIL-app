@@ -13,6 +13,7 @@
             --text-light: #F3F4F6;
             --text-muted: #9CA3AF;
             --accent-orange: #FF5E00; 
+            --accent-orange-dark: #E65500;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
@@ -52,12 +53,31 @@
 
         .user-status { font-size: 1rem; color: var(--text-muted); }
         
+        /* Professional Button States */
         .locate-btn {
-            background-color: transparent; color: var(--accent-orange);
-            border: 1px solid var(--accent-orange); padding: 10px 20px;
-            border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: transparent;
+            color: var(--accent-orange);
+            border: 1px solid var(--accent-orange);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-        .locate-btn:hover { background-color: var(--accent-orange); color: #fff; }
+
+        .locate-btn:hover {
+            background-color: rgba(255, 94, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .locate-btn:active {
+            transform: scale(0.96);
+            background-color: rgba(255, 94, 0, 0.15);
+        }
 
         /* Feed Grid */
         .feed-container {
@@ -100,174 +120,38 @@
             transition: bottom 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
         }
-        /* Active States (जब स्लाइड ओपन होगा) */
         .bottom-sheet-overlay.active { opacity: 1; visibility: visible; }
         .bottom-sheet.active { bottom: 0; }
-                .bottom-sheet.fullscreen { max-height: 100vh; height: 100vh; border-radius: 0; padding-top: 40px; }
-                        /* Multi-Media Slider Design */
-        /* 1. Static Hero Image (गायब इमेज का फिक्स) */
-        .detail-hero-img {
-            width: 100%;
-            height: 200px;
-            border-radius: 20px 20px 0 0;
-            object-fit: cover;
-        }
+        .bottom-sheet.fullscreen { max-height: 100vh; height: 100vh; border-radius: 0; padding-top: 40px; }
 
-        /* 2. Professional Slider Container */
-        /* 1. Premium Hero Slider Container */
-        .multimedia-slider-container {
-            position: relative;
-            width: 100%;
-            height: 260px;
-            background: #000;
-            border-radius: 20px 20px 0 0;
-            margin-bottom: 20px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-
-        .image-slider {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            scrollbar-width: none;
-        }
+        /* Multi-Media Slider */
+        .multimedia-slider-container { position: relative; width: 100%; height: 260px; background: #000; border-radius: 20px 20px 0 0; margin-bottom: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        .image-slider { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
         .image-slider::-webkit-scrollbar { display: none; }
-        
-        .slider-item {
-            flex: 0 0 100%;
-            scroll-snap-align: center;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .slider-item img, .slider-item video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            background: #111;
-        }
-
-        /* 2. Sleek Smart Arrows */
-        .nav-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255, 94, 0, 0.5);
-            backdrop-filter: blur(4px);
-            color: white;
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            z-index: 10;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            transition: opacity 0.3s;
-        }
-        .prev-btn { left: 8px; }
-        .next-btn { right: 8px; }
-
-        /* 3. Text Spacing Fix */
-        .about-text {
-            line-height: 1.6;
-            color: var(--text-light);
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-        }
-
-        /* --- 3. THEMED SMART ARROWS (Hobtail Orange Theme) --- */
-        .nav-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--accent-orange); /* तुम्हारी वेबसाइट का थीम कलर */
-            color: white;
-            border: none;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            z-index: 10;
-            cursor: pointer;
-            display: none; /* JS इसे स्मार्टली शो/हाइड करेगा */
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-            transition: opacity 0.3s;
-        }
-        
+        .slider-item { flex: 0 0 100%; scroll-snap-align: center; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .slider-item img, .slider-item video { width: 100%; height: 100%; object-fit: contain; background: #111; }
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: var(--accent-orange); color: white; border: none; width: 42px; height: 42px; border-radius: 50%; z-index: 10; cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 2px 8px rgba(0,0,0,0.4); transition: opacity 0.3s; }
         .prev-btn { left: 10px; }
         .next-btn { right: 10px; }
-
         .book-btn { width: 100%; background: var(--accent-orange); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(255, 94, 0, 0.4); }
 
         /* Location Prompt Modal */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7); z-index: 2999;
-            opacity: 0; visibility: hidden; 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(3px);
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 2999; opacity: 0; visibility: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(3px); }
         .modal-overlay.active { opacity: 1; visibility: visible; }
-
-        .modal-box {
-            position: fixed; 
-            top: 50%; 
-            left: 50%;
-            width: 90%; 
-            max-width: 400px;
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 30px;
-            z-index: 3000;
-
-            /* Hidden State */
-            transform: translate(-50%, -50%) scale(0.5);
-            opacity: 0; 
-            visibility: hidden;
-
-            /* Premium Animation */
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            will-change: transform, opacity;
-        }
-
-        .modal-box.active {
-            /* Active State */
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1; 
-            visibility: visible;
-        }
+        .modal-box { position: fixed; top: 50%; left: 50%; width: 90%; max-width: 400px; background: var(--card-bg); border-radius: 16px; padding: 30px; z-index: 3000; transform: translate(-50%, -50%) scale(0.5); opacity: 0; visibility: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); will-change: transform, opacity; }
+        .modal-box.active { transform: translate(-50%, -50%) scale(1); opacity: 1; visibility: visible; }
         .modal-title { font-size: 1.4rem; margin-bottom: 10px; }
         .modal-text { font-size: 1rem; color: var(--text-muted); margin-bottom: 25px; }
         .modal-btn {
             width: 100%; background: var(--accent-orange); color: white; border: none; padding: 14px;
             border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease;
         }
+        .modal-btn:hover { background-color: var(--accent-orange-dark); }
+        .modal-btn:active { transform: scale(0.96); }
 
         /* Location Bar Animation */
-        .location-bar.hidden {
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, height 0s 0.4s, padding 0s 0.4s, margin 0s 0.4s;
-			transform: scale(0.2);
-			opacity: 0;
-			height: 0;
-			padding-top: 0;
-			padding-bottom: 0;
-			margin-top: 0;
-			margin-bottom: 0;
-			overflow: hidden;
-			border-width: 0;
-        }
+        .location-bar.hidden { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, height 0s 0.4s, padding 0s 0.4s, margin 0s 0.4s; transform: scale(0.2); opacity: 0; height: 0; padding-top: 0; padding-bottom: 0; margin-top: 0; margin-bottom: 0; overflow: hidden; border-width: 0; }
 
     </style>
 </head>
@@ -275,21 +159,28 @@
 
     <header class="app-header" id="main-header">
         <div class="brand-block">
-<img src="logo.jpg" alt="Logo" class="app-logo">
+            <img src="logo.jpg" alt="Logo" class="app-logo">
             <div class="brand-name">Hob<span>tail</span></div>
         </div>
-        <div id="header-loc" style="display: flex; align-items: center; gap: 8px;">
+        <div id="header-loc" style="display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="showLocationPrompt()">
 			<svg id="header-gps-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22" style="color: var(--text-muted); transition: color 0.3s ease;">
 				<path d="M12 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm0-10c-4.42 0-8 3.58-8 8 0 4.95 6.48 12.12 7.35 13.15.22.26.54.4.85.4s.63-.14.85-.4C13.52 20.12 20 16.95 20 10c0-4.42-3.58-8-8-8zm0 17.38c-1.57-1.8-5.83-6.9-5.83-9.38 0-3.21 2.62-5.83 5.83-5.83s5.83 2.62 5.83 5.83c0 2.48-4.26 7.58-5.83 9.38z"></path>
 			</svg>
-			<span id="header-loc-text" style="color: var(--text-muted); font-size: 0.9rem; transition: color 0.3s ease;">Odisha</span>
+			<span id="header-loc-text" style="color: var(--text-muted); font-size: 0.9rem; transition: color 0.3s ease;">Set Location</span>
 		</div>
     </header>
 
     <div id="main-content">
         <div class="location-bar">
             <span class="user-status" id="status-text">Loading data...</span>
-            <button class="locate-btn" onclick="getUserLocation()">📍 Detect My Location</button>
+            <button class="locate-btn" onclick="getUserLocation()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+                    <path d="M10.25 10a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                    <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 010-1.186l4.25-7.363a1.651 1.651 0 112.86 1.664l-4.25 7.363a1.651 1.651 0 01-2.86-1.664zM19.336 10.59a1.651 1.651 0 01-2.86 1.664l-4.25-7.363a1.651 1.651 0 112.86-1.664l4.25 7.363z" clip-rule="evenodd" />
+                    <path fill-rule="evenodd" d="M10 18.25a8.25 8.25 0 100-16.5 8.25 8.25 0 000 16.5zM10 16a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
+                </svg>
+                Detect My Location
+            </button>
         </div>
         <main class="feed-container" id="feed-view"></main>
     </div>
@@ -304,25 +195,31 @@
         <div class="modal-box" id="location-modal-box">
             <h2 class="modal-title">Enable Location</h2>
             <p class="modal-text">To find the best pet clinics near you, please enable location services.</p>
-            <button class="modal-btn" onclick="requestLocationFromModal()">Detect My Location</button>
+            <button class="modal-btn" onclick="requestLocationFromModal()">
+                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="18" height="18">
+                    <path d="M10.25 10a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                    <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 010-1.186l4.25-7.363a1.651 1.651 0 112.86 1.664l-4.25 7.363a1.651 1.651 0 01-2.86-1.664zM19.336 10.59a1.651 1.651 0 01-2.86 1.664l-4.25-7.363a1.651 1.651 0 112.86-1.664l4.25 7.363z" clip-rule="evenodd" />
+                    <path fill-rule="evenodd" d="M10 18.25a8.25 8.25 0 100-16.5 8.25 8.25 0 000 16.5zM10 16a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
+                </svg>
+                Detect My Location
+            </button>
             <p style="text-align: center; margin-top: 15px; font-size: 0.8rem; color: var(--text-muted); cursor: pointer;" onclick="closeLocationPrompt()">Maybe later</p>
         </div>
     </div>
 
     <script>
-        let storesData = []; // Blank array, अब ये सीधा Google Sheet से भरेगा
+        let storesData = []; 
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRxrwy4EBjdHPkLHaSBt-fN7OC12iuAecz8N76kHM3CP1qpEL9TbVpLbYKu_ICYrlocn2m2SbURuN1Z/pub?output=csv';
 
         let userHasUsedLocation = localStorage.getItem('locationUsed') === 'true';
         let lastKnownLocation = localStorage.getItem('lastKnownLocation');
 
-        // Reset UI and storage if location is turned off
         function resetLocationState() {
             localStorage.removeItem('locationUsed');
             localStorage.removeItem('lastKnownLocation');
             userHasUsedLocation = false;
 
-            document.getElementById('header-loc-text').innerText = 'Odisha';
+            document.getElementById('header-loc-text').innerText = 'Set Location';
 			const gpsIcon = document.getElementById('header-gps-icon');
 			if(gpsIcon) {
 				gpsIcon.style.color = 'var(--text-muted)';
@@ -346,33 +243,28 @@
             document.getElementById('status-text').innerText = "Please enable location for accurate distances.";
         }
 
-        // Listen for real-time changes in location permission
         function listenForLocationChanges() {
-            // Use setInterval as a robust way to check permission status
             setInterval(async () => {
                 if (!navigator.permissions) return;
-
                 try {
                     const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
                     if (permissionStatus.state === 'denied' || permissionStatus.state === 'prompt') {
-                        // Only reset if location was previously active to avoid unnecessary resets
                         if (localStorage.getItem('locationUsed') === 'true') {
                             console.log("Location permission lost. Resetting UI.");
                             resetLocationState();
                         }
                     }
                 } catch (e) {
-                    // This can happen if the browser doesn't support the Permissions API
-                    // console.error("Error checking location permission:", e);
+                    console.error("Error checking location permission:", e);
                 }
-            }, 2000); // Check every 2 seconds
+            }, 2000); 
         }
 
         async function initApp() {
             listenForLocationChanges();
+            document.getElementById('header-loc-text').innerText = lastKnownLocation || 'Set Location';
 
             if (lastKnownLocation) {
-                document.getElementById('header-loc-text').innerText = lastKnownLocation;
                 const gpsIcon = document.getElementById('header-gps-icon');
                 if (gpsIcon) {
                     gpsIcon.style.color = 'var(--accent-orange)';
@@ -395,6 +287,8 @@
                     console.log("Permission API not supported. Asking directly.");
                     getUserLocation();
                 }
+            } else if (!lastKnownLocation) {
+                setTimeout(showLocationPrompt, 1000);
             }
         }
 
@@ -403,11 +297,8 @@
                 document.getElementById('status-text').innerText = "Syncing Live Database...";
                 const response = await fetch(sheetUrl);
                 const csvText = await response.text();
-                
                 storesData = csvToJson(csvText);
-                
                 storesData.forEach(store => store.distance = "Calculating...");
-                
                 document.getElementById('status-text').innerText = "Live Data loaded successfully.";
                 renderFeed();
             } catch (error) {
@@ -420,25 +311,18 @@
             const lines = csv.split(/\r?\n/);
             const result = [];
             const headers = lines[0].split(',');
-
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 let obj = {};
                 let currentline = [];
                 let inQuotes = false;
                 let val = '';
-                
                 for (let char of lines[i]) {
-                    if (char === '"') inQuotes = !inQuotes;
-                    else if (char === ',' && !inQuotes) {
-                        currentline.push(val);
-                        val = '';
-                    } else {
-                        val += char;
-                    }
+                    if (char === '"' && !inQuotes) inQuotes = !inQuotes;
+                    else if (char === ',' && !inQuotes) { currentline.push(val); val = ''; }
+                    else { val += char; }
                 }
                 currentline.push(val);
-
                 for (let j = 0; j < headers.length; j++) {
                     let header = headers[j] ? headers[j].trim() : "";
                     let value = currentline[j] ? currentline[j].trim() : "";
@@ -465,14 +349,18 @@
                 const distanceTag = store.distance && store.distance !== "Calculating..."
                     ? `<span class="distance-tag">${store.distance} km away</span>`
                     : '';
-
                 feedView.innerHTML += `
                     <article class="store-card">
                         <img src="${store.cover}" alt="${store.name}" class="card-image" onerror="this.style.display='none'">
                         <div class="card-content">
                             <h3 class="store-title">${store.name}</h3>
                             ${distanceTag}
-                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">${store.address}</p>
+                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; display: flex; align-items: center; gap: 6px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="flex-shrink: 0;">
+                                  <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                </svg>
+                                <span>${store.address}</span>
+                            </p>
                             <button class="view-btn" onclick="openDetails('${store.id}')">View Details</button>
                         </div>
                     </article>
@@ -492,11 +380,9 @@
         async function processLocation(position) {
             localStorage.setItem('locationUsed', 'true');
             userHasUsedLocation = true;
-
             const userLat = position.coords.latitude;
             const userLng = position.coords.longitude;
             document.getElementById('status-text').innerText = "Sorting nearest centers...";
-
             try {
                 const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLng}`);
                 const geoData = await geoResponse.json();
@@ -511,7 +397,7 @@
 				}
             } catch (e) {
                 console.error("Reverse geocoding failed", e);
-                document.getElementById('header-loc').innerText = "📍 GPS Active"; // Fallback
+                document.getElementById('header-loc-text').innerText = "GPS Active";
             }
 
             const locationBar = document.querySelector('.location-bar');
@@ -527,7 +413,6 @@
             storesData.forEach(store => {
                 store.distance = calculateDistance(userLat, userLng, store.lat, store.lng).toFixed(1);
             });
-
             storesData.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
             renderFeed();
             document.getElementById('status-text').innerText = "Showing nearest centers.";
@@ -548,15 +433,10 @@
                 case error.PERMISSION_DENIED:
                     resetLocationState();
                     showLocationPrompt();
-                    return; // Return early as reset function handles UI
-                case error.POSITION_UNAVAILABLE:
-                    message = "Location information is unavailable.";
-                    break;
-                case error.TIMEOUT:
-                    message = "The request to get user location timed out.";
-                    break;
-                default:
-                     message = "An error occurred with location services.";
+                    return;
+                case error.POSITION_UNAVAILABLE: message = "Location information is unavailable."; break;
+                case error.TIMEOUT: message = "The request to get user location timed out."; break;
+                default: message = "An error occurred with location services.";
             }
             document.getElementById('status-text').innerText = message;
             console.error(error);
@@ -565,65 +445,55 @@
         function openDetails(storeId) {
             const store = storesData.find(s => s.id === storeId);
             const detailContent = document.getElementById('detail-content');
-            
-            const images = store.image ? store.image.split(',') : [];
-            const videoUrl = store.video ? store.video.trim() : '';
+            const images = (store.image || '').split(',');
+            const videoUrl = (store.video || '').trim();
             let sliderHtml = '';
 
             if (videoUrl) {
                 sliderHtml += `
                     <div class="slider-item">
-                        <video controls controlsList="nodownload" poster="${images[0] || ''}">
-                            <source src="${videoUrl}" type="video/mp4">
-                        </video>
+                        <video controls controlsList="nodownload" poster="${images[0] || ''}"><source src="${videoUrl}" type="video/mp4"></video>
                     </div>`;
             }
-
             images.forEach(img => {
-                if(img.trim() !== "") {
-                    sliderHtml += `<div class="slider-item"><img src="${img.trim()}"></div>`;
-                }
+                if(img.trim()) sliderHtml += `<div class="slider-item"><img src="${img.trim()}"></div>`;
             });
 
             detailContent.innerHTML = `
-                <img src="${images[0] || ''}" class="detail-hero-img">
-
+                <div class="multimedia-slider-container">
+                    <button class="nav-btn prev-btn" id="goPrev">&#10094;</button>
+                    <div class="image-slider" id="mainSlider">${sliderHtml}</div>
+                    <button class="nav-btn next-btn" id="goNext">&#10095;</button>
+                </div>
                 <div style="padding: 15px;">
-                    <h1 style="font-size: 1.8rem; margin: 0;">${store.name}</h1>
-                    <p style="color: var(--text-muted); margin-bottom: 15px;">📍 ${store.address}</p>
-                    <div class="premium-tag">⭐ Verified Partner</div>
-
-                    <div class="multimedia-slider-container">
-                        <button class="nav-btn prev-btn" id="goPrev">&#10094;</button>
-                        <div class="image-slider" id="mainSlider">${sliderHtml}</div>
-                        <button class="nav-btn next-btn" id="goNext">&#10095;</button>
-                    </div>
-
+                    <h1 style="font-size: 1.8rem; margin: 0; margin-bottom: 5px;">${store.name}</h1>
+                    <p style="color: var(--text-muted); margin-bottom: 15px; display: flex; align-items: center; gap: 6px;">
+                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="flex-shrink: 0;">
+                          <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                        <span>${store.address}</span>
+                    </p>
                     <h3>About Clinic</h3>
-                    <p style="color: var(--text-light);">${store.about || 'Premium care.'}</p>
-                    <button class="book-btn" onclick="alert('Booking...')">Book Appointment</button>
+                    <p class="about-text" style="line-height: 1.6; color: var(--text-light); font-size: 0.95rem; margin-bottom: 30px;">${store.about || 'Premium care for your beloved pets.'}</p>
+                    <button class="book-btn" onclick="alert('Booking feature coming soon!')">Book Appointment</button>
                 </div>
             `;
 
             const slider = document.getElementById('mainSlider');
             const prevBtn = document.getElementById('goPrev');
             const nextBtn = document.getElementById('goNext');
-
             function updateArrows() {
+                if (!slider) return;
                 prevBtn.style.display = (slider.scrollLeft <= 5) ? 'none' : 'flex';
                 nextBtn.style.display = (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 5) ? 'none' : 'flex';
             }
-
             slider.addEventListener('scroll', updateArrows);
             setTimeout(updateArrows, 150);
-
             nextBtn.onclick = () => slider.scrollBy({ left: slider.clientWidth, behavior: 'smooth' });
             prevBtn.onclick = () => slider.scrollBy({ left: -slider.clientWidth, behavior: 'smooth' });
 
             document.getElementById('sheet-overlay').classList.add('active');
-            const bottomSheet = document.getElementById('bottom-sheet');
-            bottomSheet.classList.add('active');
-            bottomSheet.style.transform = 'translateY(0)';
+            document.getElementById('bottom-sheet').classList.add('active');
             document.body.style.overflow = 'hidden'; 
             window.history.pushState({ bottomSheet: true }, "");
         }
@@ -641,15 +511,11 @@
             const icon = document.getElementById('header-gps-icon');
             if (!modalOverlay || !modalBox || !icon) return;
 
-            // Dynamic Origin: Get the GPS icon's exact on-screen position.
             const iconRect = icon.getBoundingClientRect();
             const originX = iconRect.left + iconRect.width / 2;
             const originY = iconRect.top + iconRect.height / 2;
-
-            // Set the transform-origin of the popup to the icon's center *before* animation.
             modalBox.style.transformOrigin = `${originX}px ${originY}px`;
 
-            // Add 'active' classes to trigger the CSS transition.
             modalOverlay.classList.add('active');
             modalBox.classList.add('active');
         }
@@ -661,50 +527,17 @@
 
         function requestLocationFromModal() {
             closeLocationPrompt();
-            getUserLocation();
+            // A small delay improves the feel of the animation.
+            setTimeout(getUserLocation, 150);
         }
 
         window.addEventListener('popstate', function(event) {
             const sheetOverlay = document.getElementById('sheet-overlay');
             const bottomSheet = document.getElementById('bottom-sheet');
-            
             if (sheetOverlay.classList.contains('active')) {
                 sheetOverlay.classList.remove('active');
                 bottomSheet.classList.remove('active');
                 document.body.style.overflow = 'auto'; 
-                
-                setTimeout(() => { 
-                    bottomSheet.classList.remove('fullscreen'); 
-                    bottomSheet.style.transform = ''; 
-                }, 300);
-            }
-        });
-        const bottomSheet = document.getElementById('bottom-sheet');
-        const dragHandle = bottomSheet.querySelector('.sheet-drag-handle');
-        let startY, currentY;
-
-        bottomSheet.addEventListener('touchstart', (e) => {
-            startY = e.touches[0].clientY;
-            if (e.target.classList.contains('sheet-drag-handle')) {
-                dragHandle.style.background = 'var(--accent-orange)';
-            }
-        });
-
-        bottomSheet.addEventListener('touchmove', (e) => {
-            currentY = e.touches[0].clientY;
-            let swipeDistance = currentY - startY;
-            if (swipeDistance > 0 && bottomSheet.scrollTop <= 0) {
-                bottomSheet.style.transform = `translateY(${swipeDistance}px)`;
-            }
-        });
-
-        bottomSheet.addEventListener('touchend', (e) => {
-            if (dragHandle) dragHandle.style.background = 'rgba(255,255,255,0.2)';
-            let swipeDistance = currentY - startY;
-            if (swipeDistance > 100 && bottomSheet.scrollTop <= 0) {
-                window.history.back();
-            } else {
-                bottomSheet.style.transform = 'translateY(0)';
             }
         });
 
