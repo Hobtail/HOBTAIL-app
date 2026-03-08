@@ -90,7 +90,7 @@
             border: 1px solid rgba(255, 255, 255, 0.05); transition: transform 0.3s ease;
         }
         .store-card:hover { transform: translateY(-5px); border-color: rgba(255, 94, 0, 0.5); }
-        .card-image { width: 100%; height: 180px; object-fit: cover; }
+        .card-image { width: 100%; height: 180px; object-fit: cover; background: #2a3f7a; }
         .card-content { padding: 20px; }
         .store-title { font-size: 1.2rem; margin-bottom: 5px; }
         .distance-tag {
@@ -106,26 +106,14 @@
         .view-btn:hover { background-color: var(--accent-orange); border-color: var(--accent-orange); }
 
         /* Zomato Style Bottom Sheet */
-        .bottom-sheet-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7); z-index: 1999;
-            opacity: 0; visibility: hidden; transition: all 0.3s ease;
-            backdrop-filter: blur(3px);
-        }
-        .bottom-sheet {
-            position: fixed; bottom: -100%; left: 0; width: 100%;
-            max-height: 85vh; background-color: var(--card-bg);
-            border-radius: 24px 24px 0 0; z-index: 2000;
-            padding: 20px 20px 40px 20px; overflow-y: auto;
-            transition: bottom 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
-        }
+        .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1999; opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(3px); }
+        .bottom-sheet { position: fixed; bottom: -100%; left: 0; width: 100%; max-height: 85vh; background-color: var(--card-bg); border-radius: 24px 24px 0 0; z-index: 2000; padding: 20px 20px 40px 20px; overflow-y: auto; transition: bottom 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 -5px 25px rgba(0,0,0,0.5); }
         .bottom-sheet-overlay.active { opacity: 1; visibility: visible; }
         .bottom-sheet.active { bottom: 0; }
         .bottom-sheet.fullscreen { max-height: 100vh; height: 100vh; border-radius: 0; padding-top: 40px; }
 
         /* Multi-Media Slider */
-        .multimedia-slider-container { position: relative; width: 100%; height: 260px; background: #000; border-radius: 20px 20px 0 0; margin-bottom: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        .multimedia-slider-container { position: relative; width: 100%; height: 260px; background: #000; border-radius: 20px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
         .image-slider { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
         .image-slider::-webkit-scrollbar { display: none; }
         .slider-item { flex: 0 0 100%; scroll-snap-align: center; height: 100%; display: flex; align-items: center; justify-content: center; }
@@ -142,11 +130,7 @@
         .modal-box.active { transform: translate(-50%, -50%) scale(1); opacity: 1; visibility: visible; }
         .modal-title { font-size: 1.4rem; margin-bottom: 10px; }
         .modal-text { font-size: 1rem; color: var(--text-muted); margin-bottom: 25px; }
-        .modal-btn {
-            width: 100%; background: var(--accent-orange); color: white; border: none; padding: 14px;
-            border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease;
-        }
+        .modal-btn { width: 100%; background: var(--accent-orange); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; }
         .modal-btn:hover { background-color: var(--accent-orange-dark); }
         .modal-btn:active { transform: scale(0.96); }
 
@@ -255,7 +239,7 @@
                         }
                     }
                 } catch (e) {
-                    console.error("Error checking location permission:", e);
+                    // console.error("Error checking location permission:", e);
                 }
             }, 2000); 
         }
@@ -284,7 +268,7 @@
                         showLocationPrompt();
                     }
                 } catch(e) {
-                    console.log("Permission API not supported. Asking directly.");
+                    // console.log("Permission API not supported. Asking directly.");
                     getUserLocation();
                 }
             } else if (!lastKnownLocation) {
@@ -307,34 +291,42 @@
             }
         }
 
-        function csvToJson(csv) {
+       function csvToJson(csv) {
             const lines = csv.split(/\r?\n/);
             const result = [];
-            const headers = lines[0].split(',');
+            const headers = lines[0].split(",").map(h => h.trim());
+
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
+                
                 let obj = {};
                 let currentline = [];
                 let inQuotes = false;
                 let val = '';
+
                 for (let char of lines[i]) {
-                    if (char === '"' && !inQuotes) inQuotes = !inQuotes;
-                    else if (char === ',' && !inQuotes) { currentline.push(val); val = ''; }
-                    else { val += char; }
-                }
-                currentline.push(val);
-                for (let j = 0; j < headers.length; j++) {
-                    let header = headers[j] ? headers[j].trim() : "";
-                    let value = currentline[j] ? currentline[j].trim() : "";
-                    if (value.startsWith('"') && value.endsWith('"')) value = value.slice(1, -1);
-                    if (header) obj[header] = value;
-                }
-                 if (currentline.length > 7) {
-                    let coverValue = currentline[7] ? currentline[7].trim() : '';
-                    if (coverValue.startsWith('"') && coverValue.endsWith('"')) {
-                        coverValue = coverValue.slice(1, -1);
+                    if (char === '"' && inQuotes) {
+                        inQuotes = false;
+                    } else if (char === '"' && !inQuotes) {
+                        inQuotes = true;
+                    } else if (char === ',' && !inQuotes) {
+                        currentline.push(val.trim());
+                        val = '';
+                    } else {
+                        val += char;
                     }
-                    obj.cover = coverValue;
+                }
+                currentline.push(val.trim());
+
+                for (let j = 0; j < headers.length; j++) {
+                    if (headers[j]) {
+                         let value = currentline[j] || '';
+                         // Remove surrounding quotes if they exist, but keep internal ones
+                         if (value.startsWith('"') && value.endsWith('"')) {
+                             value = value.slice(1, -1);
+                         }
+                         obj[headers[j]] = value;
+                    }
                 }
                 result.push(obj);
             }
@@ -349,19 +341,20 @@
                 const distanceTag = store.distance && store.distance !== "Calculating..."
                     ? `<span class="distance-tag">${store.distance} km away</span>`
                     : '';
+
                 feedView.innerHTML += `
-                    <article class="store-card">
-                        <img src="${store.cover}" alt="${store.name}" class="card-image" onerror="this.style.display='none'">
+                    <article class="store-card" onclick="openDetails('${store.id}')">
+                        <img src="${store.cover || ''}" alt="${store.name}" class="card-image" onerror="this.style.background='#2a3f7a'">
                         <div class="card-content">
                             <h3 class="store-title">${store.name}</h3>
                             ${distanceTag}
-                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; display: flex; align-items: center; gap: 6px;">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="flex-shrink: 0;">
+                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 6px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="flex-shrink: 0; margin-top: 2px;">
                                   <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                                 </svg>
                                 <span>${store.address}</span>
                             </p>
-                            <button class="view-btn" onclick="openDetails('${store.id}')">View Details</button>
+                            <button class="view-btn">View Details</button>
                         </div>
                     </article>
                 `;
@@ -444,8 +437,9 @@
 
         function openDetails(storeId) {
             const store = storesData.find(s => s.id === storeId);
+            if (!store) return;
             const detailContent = document.getElementById('detail-content');
-            const images = (store.image || '').split(',');
+            const images = (store.image || '').split(',').map(s => s.trim()).filter(Boolean);
             const videoUrl = (store.video || '').trim();
             let sliderHtml = '';
 
@@ -456,7 +450,7 @@
                     </div>`;
             }
             images.forEach(img => {
-                if(img.trim()) sliderHtml += `<div class="slider-item"><img src="${img.trim()}"></div>`;
+                sliderHtml += `<div class="slider-item"><img src="${img}" alt="${store.name}"></div>`;
             });
 
             detailContent.innerHTML = `
@@ -467,8 +461,8 @@
                 </div>
                 <div style="padding: 15px;">
                     <h1 style="font-size: 1.8rem; margin: 0; margin-bottom: 5px;">${store.name}</h1>
-                    <p style="color: var(--text-muted); margin-bottom: 15px; display: flex; align-items: center; gap: 6px;">
-                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="flex-shrink: 0;">
+                    <p style="color: var(--text-muted); margin-bottom: 15px; display: flex; align-items: flex-start; gap: 6px;">
+                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="flex-shrink: 0; margin-top: 2px;">
                           <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                         </svg>
                         <span>${store.address}</span>
@@ -527,7 +521,6 @@
 
         function requestLocationFromModal() {
             closeLocationPrompt();
-            // A small delay improves the feel of the animation.
             setTimeout(getUserLocation, 150);
         }
 
