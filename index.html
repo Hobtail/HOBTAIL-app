@@ -290,26 +290,60 @@
         let userHasUsedLocation = localStorage.getItem('locationUsed') === 'true';
         let lastKnownLocation = localStorage.getItem('lastKnownLocation');
 
+        // Reset UI and storage if location is turned off
+        function resetLocationState() {
+            localStorage.removeItem('locationUsed');
+            localStorage.removeItem('lastKnownLocation');
+            userHasUsedLocation = false;
+
+            document.getElementById('header-loc').innerText = '📍 Odisha';
+            document.querySelector('.location-bar').classList.remove('hidden');
+
+            if (storesData.length > 0) {
+                storesData.forEach(store => store.distance = "Calculating...");
+                renderFeed();
+            }
+
+            document.getElementById('status-text').innerText = "Please enable location for accurate distances.";
+        }
+
+        // Listen for real-time changes in location permission
+        async function listenForLocationChanges() {
+            if (!navigator.permissions) return;
+            try {
+                const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
+                permissionStatus.onchange = () => {
+                    if (permissionStatus.state !== 'granted') {
+                        resetLocationState();
+                        showLocationPrompt();
+                    }
+                };
+            } catch (e) {
+                console.error("Error setting up permission listener:", e);
+            }
+        }
+
         async function initApp() {
+            listenForLocationChanges();
+
             if (lastKnownLocation) {
                 document.getElementById('header-loc').innerText = `📍 ${lastKnownLocation}`;
             }
 
-            await loadRealData(); // Load data first
+            await loadRealData();
 
             if (userHasUsedLocation) {
                 try {
                     const permission = await navigator.permissions.query({ name: 'geolocation' });
                     if (permission.state === 'granted') {
                         getUserLocation();
-                    } else if (permission.state === 'prompt') {
-                        showLocationPrompt();
-                    } else if (permission.state === 'denied') {
+                    } else {
+                        resetLocationState();
                         showLocationPrompt();
                     }
                 } catch(e) {
                     console.log("Permission API not supported. Asking directly.");
-                    getUserLocation(); // Fallback for older browsers
+                    getUserLocation();
                 }
             }
         }
@@ -399,9 +433,6 @@
 
         function getUserLocation() {
             document.getElementById('status-text').innerText = "Finding your location...";
-            localStorage.setItem('locationUsed', 'true'); // Persistence
-            userHasUsedLocation = true;
-
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(processLocation, showError);
             } else {
@@ -410,6 +441,9 @@
         }
 
         async function processLocation(position) {
+            localStorage.setItem('locationUsed', 'true');
+            userHasUsedLocation = true;
+
             const userLat = position.coords.latitude;
             const userLng = position.coords.longitude;
             document.getElementById('status-text').innerText = "Sorting nearest centers...";
@@ -447,18 +481,20 @@
         }
 
         function showError(error) {
-            let message = "An error occurred with location services.";
+            let message;
             switch(error.code) {
                 case error.PERMISSION_DENIED:
-                    message = "Please Allow Location Access to find clinics near you.";
+                    resetLocationState();
                     showLocationPrompt();
-                    break;
+                    return; // Return early as reset function handles UI
                 case error.POSITION_UNAVAILABLE:
                     message = "Location information is unavailable.";
                     break;
                 case error.TIMEOUT:
                     message = "The request to get user location timed out.";
                     break;
+                default:
+                     message = "An error occurred with location services.";
             }
             document.getElementById('status-text').innerText = message;
             console.error(error);
@@ -556,7 +592,7 @@
             const sheetOverlay = document.getElementById('sheet-overlay');
             const bottomSheet = document.getElementById('bottom-sheet');
             
-            if (sheetOverlay.classList.contains('active')) {
+            if (sheetOverlay.classList..contains('active')) {
                 sheetOverlay.classList.remove('active');
                 bottomSheet.classList.remove('active');
                 document.body.style.overflow = 'auto'; 
