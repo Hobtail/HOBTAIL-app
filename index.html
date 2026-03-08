@@ -101,13 +101,112 @@
         /* Active States (जब स्लाइड ओपन होगा) */
         .bottom-sheet-overlay.active { opacity: 1; visibility: visible; }
         .bottom-sheet.active { bottom: 0; }
+                .bottom-sheet.fullscreen { max-height: 100vh; height: 100vh; border-radius: 0; padding-top: 40px; }
+                        /* Multi-Media Slider Design */
+        /* 1. Static Hero Image (गायब इमेज का फिक्स) */
+        .detail-hero-img {
+            width: 100%;
+            height: 200px;
+            border-radius: 20px 20px 0 0;
+            object-fit: cover;
+        }
+
+        /* 2. Professional Slider Container */
+        /* 1. Premium Hero Slider Container */
+        .multimedia-slider-container {
+            position: relative;
+            width: 100%;
+            height: 260px;
+            background: #000;
+            border-radius: 20px 20px 0 0;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .image-slider {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+        }
+        .image-slider::-webkit-scrollbar { display: none; }
         
-        /* छोटे डिज़ाइन एलिमेंट्स */
-        .sheet-drag-handle { width: 50px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 5px; margin: 0 auto 20px auto; }
-        .close-btn { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: none; color: white; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
-        .close-btn:hover { background: var(--accent-orange); }
-        .detail-hero-img { width: 100%; height: 220px; object-fit: cover; border-radius: 16px; margin-bottom: 15px; }
-        .premium-tag { background: rgba(255,94,0,0.1); color: var(--accent-orange); padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; display: inline-block; margin-bottom: 15px; border: 1px solid rgba(255,94,0,0.3); }
+        .slider-item {
+            flex: 0 0 100%;
+            scroll-snap-align: center;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slider-item img, .slider-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #111;
+        }
+
+        /* 2. Sleek Smart Arrows */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 94, 0, 0.5);
+            backdrop-filter: blur(4px);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            z-index: 10;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            transition: opacity 0.3s;
+        }
+        .prev-btn { left: 8px; }
+        .next-btn { right: 8px; }
+
+        /* 3. Text Spacing Fix */
+        .about-text {
+            line-height: 1.6;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+        }
+
+        /* --- 3. THEMED SMART ARROWS (Hobtail Orange Theme) --- */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--accent-orange); /* तुम्हारी वेबसाइट का थीम कलर */
+            color: white;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            z-index: 10;
+            cursor: pointer;
+            display: none; /* JS इसे स्मार्टली शो/हाइड करेगा */
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            transition: opacity 0.3s;
+        }
+        
+        .prev-btn { left: 10px; }
+        .next-btn { right: 10px; }
+
         .book-btn { width: 100%; background: var(--accent-orange); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(255, 94, 0, 0.4); }
 
     </style>
@@ -133,7 +232,6 @@
     <div class="bottom-sheet-overlay" id="sheet-overlay" onclick="closeDetails()"></div>
     <div class="bottom-sheet" id="bottom-sheet">
         <div class="sheet-drag-handle"></div>
-        <button class="close-btn" onclick="closeDetails()">✕</button>
         <div id="detail-content"></div>
     </div>
 
@@ -266,42 +364,131 @@
             console.error(error);
         }
 
-        // Step 4: Zomato Style Bottom Sheet Logic
+        // Step 4: Premium Swipeable Bottom Sheet Logic (Smart Touch)
         function openDetails(storeId) {
             const store = storesData.find(s => s.id === storeId);
             const detailContent = document.getElementById('detail-content');
             
-            // यहाँ हम अंदर का कंटेंट डिज़ाइन कर रहे हैं
+            const images = store.image ? store.image.split(',') : [];
+            const videoUrl = store.video ? store.video.trim() : '';
+            let sliderHtml = '';
+
+            if (videoUrl) {
+                sliderHtml += `
+                    <div class="slider-item">
+                        <video controls controlsList="nodownload" poster="${images[0] || ''}">
+                            <source src="${videoUrl}" type="video/mp4">
+                        </video>
+                    </div>`;
+            }
+
+            images.forEach(img => {
+                if(img.trim() !== "") {
+                    sliderHtml += `<div class="slider-item"><img src="${img.trim()}"></div>`;
+                }
+            });
+
             detailContent.innerHTML = `
-                <img src="${store.image}" class="detail-hero-img">
-                <h1 style="font-size: 1.8rem; margin-bottom: 5px;">${store.name}</h1>
-                <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 15px;">📍 ${store.address}</p>
-                
-                <div class="premium-tag">⭐ Verified Partner • ${store.distance} km away</div>
-                
-                <h3 style="margin-bottom: 10px; font-size: 1.2rem;">About Clinic</h3>
-                <p style="line-height: 1.6; margin-bottom: 25px; color: var(--text-light); font-size: 0.95rem;">
-                    We provide top-quality care, grooming, and medical checkups for your beloved pets. Book an appointment today for a premium experience!
-                </p>
-                
-                <button class="book-btn" onclick="alert('Booking feature coming soon!')">Book Appointment</button>
+                <img src="${images[0] || ''}" class="detail-hero-img">
+
+                <div style="padding: 15px;">
+                    <h1 style="font-size: 1.8rem; margin: 0;">${store.name}</h1>
+                    <p style="color: var(--text-muted); margin-bottom: 15px;">📍 ${store.address}</p>
+                    <div class="premium-tag">⭐ Verified Partner</div>
+
+                    <div class="multimedia-slider-container">
+                        <button class="nav-btn prev-btn" id="goPrev">&#10094;</button>
+                        <div class="image-slider" id="mainSlider">${sliderHtml}</div>
+                        <button class="nav-btn next-btn" id="goNext">&#10095;</button>
+                    </div>
+
+                    <h3>About Clinic</h3>
+                    <p style="color: var(--text-light);">${store.about || 'Premium care.'}</p>
+                    <button class="book-btn" onclick="alert('Booking...')">Book Appointment</button>
+                </div>
             `;
 
-            // स्लाइड को ऊपर लाने का जादू
+            const slider = document.getElementById('mainSlider');
+            const prevBtn = document.getElementById('goPrev');
+            const nextBtn = document.getElementById('goNext');
+
+            // स्मार्ट एरो लॉजिक (छिपना और दिखना)
+            function updateArrows() {
+                prevBtn.style.display = (slider.scrollLeft <= 5) ? 'none' : 'flex';
+                nextBtn.style.display = (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 5) ? 'none' : 'flex';
+            }
+
+            slider.addEventListener('scroll', updateArrows);
+            setTimeout(updateArrows, 150); // शुरुआती चेक
+
+            nextBtn.onclick = () => slider.scrollBy({ left: slider.clientWidth, behavior: 'smooth' });
+            prevBtn.onclick = () => slider.scrollBy({ left: -slider.clientWidth, behavior: 'smooth' });
+
             document.getElementById('sheet-overlay').classList.add('active');
-            document.getElementById('bottom-sheet').classList.add('active');
-            document.body.style.overflow = 'hidden'; // पीछे का पेज स्क्रॉल होना बंद हो जाएगा
+            const bottomSheet = document.getElementById('bottom-sheet');
+            bottomSheet.classList.add('active');
+            bottomSheet.style.transform = 'translateY(0)';
+            document.body.style.overflow = 'hidden'; 
+            window.history.pushState({ bottomSheet: true }, "");
         }
 
+        // Function to close the bottom sheet
         function closeDetails() {
-            // स्लाइड को वापस नीचे भेजने का जादू
-            document.getElementById('sheet-overlay').classList.remove('active');
-            document.getElementById('bottom-sheet').classList.remove('active');
-            document.body.style.overflow = 'auto'; // पीछे का पेज फिर से स्क्रॉल होने लगेगा
+            const sheetOverlay = document.getElementById('sheet-overlay');
+            // Trigger one step back if the sheet is open
+            if (sheetOverlay.classList.contains('active')) {
+                window.history.back(); 
+            }
         }
 
-        // Start App
-        loadRealData();
+        // Hardware back button sensor
+        window.addEventListener('popstate', function(event) {
+            const sheetOverlay = document.getElementById('sheet-overlay');
+            const bottomSheet = document.getElementById('bottom-sheet');
+            
+            if (sheetOverlay.classList.contains('active')) {
+                // Hide the sheet
+                sheetOverlay.classList.remove('active');
+                bottomSheet.classList.remove('active');
+                document.body.style.overflow = 'auto'; // Unlock background scrolling
+                
+                // Remove fullscreen effect after animation completes
+                setTimeout(() => { 
+                    bottomSheet.classList.remove('fullscreen'); 
+                    bottomSheet.style.transform = ''; 
+                }, 300);
+            }
+        });
+        const bottomSheet = document.getElementById('bottom-sheet');
+        const dragHandle = bottomSheet.querySelector('.sheet-drag-handle');
+        let startY, currentY;
+
+        bottomSheet.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+            if (e.target.classList.contains('sheet-drag-handle')) {
+                dragHandle.style.background = 'var(--accent-orange)';
+            }
+        });
+
+        bottomSheet.addEventListener('touchmove', (e) => {
+            currentY = e.touches[0].clientY;
+            let swipeDistance = currentY - startY;
+            if (swipeDistance > 0 && bottomSheet.scrollTop <= 0) {
+                bottomSheet.style.transform = `translateY(${swipeDistance}px)`;
+            }
+        });
+
+        bottomSheet.addEventListener('touchend', (e) => {
+            if (dragHandle) dragHandle.style.background = 'rgba(255,255,255,0.2)';
+            let swipeDistance = currentY - startY;
+            if (swipeDistance > 100 && bottomSheet.scrollTop <= 0) {
+                window.history.back();
+            } else {
+                bottomSheet.style.transform = 'translateY(0)';
+            }
+        });
+
+        loadRealData(); // डेटा लोड करने का कमांड
     </script>
 </body>
 </html>
