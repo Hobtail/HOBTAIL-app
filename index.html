@@ -308,19 +308,25 @@
         }
 
         // Listen for real-time changes in location permission
-        async function listenForLocationChanges() {
-            if (!navigator.permissions) return;
-            try {
-                const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
-                permissionStatus.onchange = () => {
-                    if (permissionStatus.state !== 'granted') {
-                        resetLocationState();
-                        showLocationPrompt();
+        function listenForLocationChanges() {
+            // Use setInterval as a robust way to check permission status
+            setInterval(async () => {
+                if (!navigator.permissions) return;
+
+                try {
+                    const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
+                    if (permissionStatus.state === 'denied' || permissionStatus.state === 'prompt') {
+                        // Only reset if location was previously active to avoid unnecessary resets
+                        if (localStorage.getItem('locationUsed') === 'true') {
+                            console.log("Location permission lost. Resetting UI.");
+                            resetLocationState();
+                        }
                     }
-                };
-            } catch (e) {
-                console.error("Error setting up permission listener:", e);
-            }
+                } catch (e) {
+                    // This can happen if the browser doesn't support the Permissions API
+                    // console.error("Error checking location permission:", e);
+                }
+            }, 2000); // Check every 2 seconds
         }
 
         async function initApp() {
@@ -412,17 +418,16 @@
         function renderFeed() {
             feedView.innerHTML = '';
             storesData.forEach(store => {
-                let displayDistance = store.distance;
-                if(displayDistance !== "Calculating...") {
-                    displayDistance = displayDistance + " km away";
-                }
+                const distanceTag = store.distance && store.distance !== "Calculating..."
+                    ? `<span class="distance-tag">${store.distance} km away</span>`
+                    : '';
 
                 feedView.innerHTML += `
                     <article class="store-card">
                         <img src="${store.cover}" alt="${store.name}" class="card-image" onerror="this.style.display='none'">
                         <div class="card-content">
                             <h3 class="store-title">${store.name}</h3>
-                            <span class="distance-tag">${displayDistance}</span>
+                            ${distanceTag}
                             <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">${store.address}</p>
                             <button class="view-btn" onclick="openDetails('${store.id}')">View Details</button>
                         </div>
