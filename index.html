@@ -40,7 +40,7 @@
         .brand-name { font-size: 1.6rem; font-weight: bold; }
         .brand-name span { color: var(--accent-orange); }
 
-        /* Location Action Bar */
+        /* Location Action Bar */0
         .location-bar {
             max-width: 1200px; margin: 20px auto 30px auto; display: flex;
             justify-content: space-between; align-items: center;
@@ -209,6 +209,45 @@
 
         .book-btn { width: 100%; background: var(--accent-orange); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(255, 94, 0, 0.4); }
 
+        /* Location Prompt Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); z-index: 2999;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease;
+            backdrop-filter: blur(3px);
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal-box {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 90%; max-width: 400px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            z-index: 3000;
+            opacity: 0; visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .modal-box.active { transform: translate(-50%, -50%) scale(1); opacity: 1; visibility: visible; }
+        .modal-title { font-size: 1.4rem; margin-bottom: 10px; }
+        .modal-text { font-size: 1rem; color: var(--text-muted); margin-bottom: 25px; }
+        .modal-btn {
+            width: 100%; background: var(--accent-orange); color: white; border: none; padding: 14px;
+            border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer;
+        }
+
+        /* Location Bar Animation */
+        .location-bar.hidden {
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: scale(0.8);
+            height: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
     </style>
 </head>
 <body>
@@ -234,24 +273,55 @@
         <div class="sheet-drag-handle"></div>
         <div id="detail-content"></div>
     </div>
+    
+    <div class="modal-overlay" id="location-modal-overlay">
+        <div class="modal-box" id="location-modal-box">
+            <h2 class="modal-title">Enable Location</h2>
+            <p class="modal-text">To find the best pet clinics near you, please enable location services.</p>
+            <button class="modal-btn" onclick="requestLocationFromModal()">Detect My Location</button>
+            <p style="text-align: center; margin-top: 15px; font-size: 0.8rem; color: var(--text-muted); cursor: pointer;" onclick="closeLocationPrompt()">Maybe later</p>
+        </div>
+    </div>
 
     <script>
-                let storesData = []; // Blank array, अब ये सीधा Google Sheet से भरेगा
-
-        // तुम्हारा लाइव ऑटोमैटिक डेटाबेस लिंक
+        let storesData = []; // Blank array, अब ये सीधा Google Sheet से भरेगा
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRxrwy4EBjdHPkLHaSBt-fN7OC12iuAecz8N76kHM3CP1qpEL9TbVpLbYKu_ICYrlocn2m2SbURuN1Z/pub?output=csv';
 
-        // Step 1: Fetch API - Live Google Sheet Load Engine
+        let userHasUsedLocation = localStorage.getItem('locationUsed') === 'true';
+        let lastKnownLocation = localStorage.getItem('lastKnownLocation');
+
+        async function initApp() {
+            if (lastKnownLocation) {
+                document.getElementById('header-loc').innerText = `📍 ${lastKnownLocation}`;
+            }
+
+            await loadRealData(); // Load data first
+
+            if (userHasUsedLocation) {
+                try {
+                    const permission = await navigator.permissions.query({ name: 'geolocation' });
+                    if (permission.state === 'granted') {
+                        getUserLocation();
+                    } else if (permission.state === 'prompt') {
+                        showLocationPrompt();
+                    } else if (permission.state === 'denied') {
+                        showLocationPrompt();
+                    }
+                } catch(e) {
+                    console.log("Permission API not supported. Asking directly.");
+                    getUserLocation(); // Fallback for older browsers
+                }
+            }
+        }
+
         async function loadRealData() {
             try {
                 document.getElementById('status-text').innerText = "Syncing Live Database...";
                 const response = await fetch(sheetUrl);
                 const csvText = await response.text();
                 
-                // जादुई ट्रांसलेटर जो CSV को JSON में बदलेगा
                 storesData = csvToJson(csvText);
                 
-                // Default distance ऐड कर दो
                 storesData.forEach(store => store.distance = "Calculating...");
                 
                 document.getElementById('status-text').innerText = "Live Data loaded successfully.";
@@ -262,7 +332,6 @@
             }
         }
 
-        // CSV to JSON Translator (प्रो-हैक: यह एड्रेस के कॉमा को भी सही से हैंडल करेगा)
         function csvToJson(csv) {
             const lines = csv.split(/\r?\n/);
             const result = [];
@@ -289,26 +358,21 @@
                 for (let j = 0; j < headers.length; j++) {
                     let header = headers[j] ? headers[j].trim() : "";
                     let value = currentline[j] ? currentline[j].trim() : "";
-                    // एक्स्ट्रा इन्वर्टेड कॉमा हटाना
                     if (value.startsWith('"') && value.endsWith('"')) value = value.slice(1, -1);
                     if (header) obj[header] = value;
                 }
-
-                if (currentline.length > 7) {
+                 if (currentline.length > 7) {
                     let coverValue = currentline[7] ? currentline[7].trim() : '';
-                    if (coverValue.startsWith('"') && coverValue.endsWith('"')) {
+                    if (coverValue.startsWith(''') && coverValue.endsWith(''')) {
                         coverValue = coverValue.slice(1, -1);
                     }
                     obj.cover = coverValue;
                 }
-                
                 result.push(obj);
             }
             return result;
         }
 
-
-        // Step 2: UI Render Logic
         const feedView = document.getElementById('feed-view');
         
         function renderFeed() {
@@ -333,9 +397,11 @@
             });
         }
 
-        // Step 3: Location Engine
         function getUserLocation() {
             document.getElementById('status-text').innerText = "Finding your location...";
+            localStorage.setItem('locationUsed', 'true'); // Persistence
+            userHasUsedLocation = true;
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(processLocation, showError);
             } else {
@@ -343,11 +409,24 @@
             }
         }
 
-        function processLocation(position) {
+        async function processLocation(position) {
             const userLat = position.coords.latitude;
             const userLng = position.coords.longitude;
             document.getElementById('status-text').innerText = "Sorting nearest centers...";
-            document.getElementById('header-loc').innerText = "📍 GPS Active";
+
+            try {
+                const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLng}`);
+                const geoData = await geoResponse.json();
+                const city = geoData.address.city || geoData.address.town || geoData.address.village || 'Your Area';
+                lastKnownLocation = city;
+                localStorage.setItem('lastKnownLocation', city);
+                document.getElementById('header-loc').innerText = `📍 ${city}`;
+            } catch (e) {
+                console.error("Reverse geocoding failed", e);
+                document.getElementById('header-loc').innerText = "📍 GPS Active"; // Fallback
+            }
+
+            document.querySelector('.location-bar').classList.add('hidden');
 
             storesData.forEach(store => {
                 store.distance = calculateDistance(userLat, userLng, store.lat, store.lng).toFixed(1);
@@ -358,7 +437,6 @@
             document.getElementById('status-text').innerText = "Showing nearest centers.";
         }
 
-        // Haversine Formula (Math Logic)
         function calculateDistance(lat1, lon1, lat2, lon2) {
             const R = 6371; 
             const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -369,11 +447,23 @@
         }
 
         function showError(error) {
-            document.getElementById('status-text').innerText = "Please Allow Location Access.";
+            let message = "An error occurred with location services.";
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    message = "Please Allow Location Access to find clinics near you.";
+                    showLocationPrompt();
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = "Location information is unavailable.";
+                    break;
+                case error.TIMEOUT:
+                    message = "The request to get user location timed out.";
+                    break;
+            }
+            document.getElementById('status-text').innerText = message;
             console.error(error);
         }
 
-        // Step 4: Premium Swipeable Bottom Sheet Logic (Smart Touch)
         function openDetails(storeId) {
             const store = storesData.find(s => s.id === storeId);
             const detailContent = document.getElementById('detail-content');
@@ -421,14 +511,13 @@
             const prevBtn = document.getElementById('goPrev');
             const nextBtn = document.getElementById('goNext');
 
-            // स्मार्ट एरो लॉजिक (छिपना और दिखना)
             function updateArrows() {
                 prevBtn.style.display = (slider.scrollLeft <= 5) ? 'none' : 'flex';
                 nextBtn.style.display = (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 5) ? 'none' : 'flex';
             }
 
             slider.addEventListener('scroll', updateArrows);
-            setTimeout(updateArrows, 150); // शुरुआती चेक
+            setTimeout(updateArrows, 150);
 
             nextBtn.onclick = () => slider.scrollBy({ left: slider.clientWidth, behavior: 'smooth' });
             prevBtn.onclick = () => slider.scrollBy({ left: -slider.clientWidth, behavior: 'smooth' });
@@ -441,27 +530,37 @@
             window.history.pushState({ bottomSheet: true }, "");
         }
 
-        // Function to close the bottom sheet
         function closeDetails() {
             const sheetOverlay = document.getElementById('sheet-overlay');
-            // Trigger one step back if the sheet is open
             if (sheetOverlay.classList.contains('active')) {
                 window.history.back(); 
             }
         }
+        
+        function showLocationPrompt() {
+            document.getElementById('location-modal-overlay').classList.add('active');
+            document.getElementById('location-modal-box').classList.add('active');
+        }
 
-        // Hardware back button sensor
+        function closeLocationPrompt() {
+            document.getElementById('location-modal-overlay').classList.remove('active');
+            document.getElementById('location-modal-box').classList.remove('active');
+        }
+
+        function requestLocationFromModal() {
+            closeLocationPrompt();
+            getUserLocation();
+        }
+
         window.addEventListener('popstate', function(event) {
             const sheetOverlay = document.getElementById('sheet-overlay');
             const bottomSheet = document.getElementById('bottom-sheet');
             
             if (sheetOverlay.classList.contains('active')) {
-                // Hide the sheet
                 sheetOverlay.classList.remove('active');
                 bottomSheet.classList.remove('active');
-                document.body.style.overflow = 'auto'; // Unlock background scrolling
+                document.body.style.overflow = 'auto'; 
                 
-                // Remove fullscreen effect after animation completes
                 setTimeout(() => { 
                     bottomSheet.classList.remove('fullscreen'); 
                     bottomSheet.style.transform = ''; 
@@ -497,7 +596,7 @@
             }
         });
 
-        loadRealData(); // डेटा लोड करने का कमांड
+        initApp();
     </script>
 </body>
 </html>
