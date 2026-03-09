@@ -79,6 +79,12 @@
             background-color: rgba(255, 94, 0, 0.15);
         }
         
+        .locate-btn.detecting {
+            background-color: var(--accent-orange-dark);
+            color: white;
+            cursor: wait;
+        }
+
         .locate-btn svg {
             stroke: currentColor;
         }
@@ -155,7 +161,7 @@
                     <circle cx="12" cy="12" r="10"></circle>
                     <circle cx="12" cy="12" r="3"></circle>
                 </svg>
-                Detect My Location
+                <span id="locate-btn-text">Detect My Location</span>
             </button>
         </div>
         <main class="feed-container" id="feed-view"></main>
@@ -248,15 +254,25 @@
             }
         }
 
-        async function loadRealData() {
+        async function loadRealData(coords) {
             try {
                 document.getElementById('status-text').innerText = "Syncing Live Database...";
                 const response = await fetch(sheetUrl);
                 const csvText = await response.text();
                 storesData = csvToJson(csvText);
-                storesData.forEach(store => store.distance = "Calculating...");
+                
+                if (coords) {
+                    storesData.forEach(store => {
+                        store.distance = calculateDistance(coords.latitude, coords.longitude, store.lat, store.lng).toFixed(1);
+                    });
+                    storesData.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+                } else {
+                    storesData.forEach(store => store.distance = "Calculating...");
+                }
+
                 document.getElementById('status-text').innerText = "Live Data loaded successfully.";
                 renderFeed();
+
             } catch (error) {
                 console.error("Error loading Live Database:", error);
                 document.getElementById('status-text').innerText = "Database connection failed.";
@@ -334,24 +350,39 @@
         }
 
         function getUserLocation() {
+            const locateBtn = document.querySelector('.locate-btn');
+            const btnText = document.getElementById('locate-btn-text');
+
+            locateBtn.classList.add('detecting');
+            btnText.innerText = 'Detecting...';
             document.getElementById('status-text').innerText = "Finding your location...";
+
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(processLocation, showError);
+                navigator.geolocation.getCurrentPosition(processLocation, (error) => {
+                    showError(error);
+                    locateBtn.classList.remove('detecting');
+                    btnText.innerText = 'Detect My Location';
+                });
             } else {
                 document.getElementById('status-text').innerText = "GPS not supported by your browser.";
+                locateBtn.classList.remove('detecting');
+                btnText.innerText = 'Detect My Location';
             }
         }
 
         async function processLocation(position) {
+            const locateBtn = document.querySelector('.locate-btn');
+            const btnText = document.getElementById('locate-btn-text');
             localStorage.setItem('locationUsed', 'true');
             userHasUsedLocation = true;
-            const userLat = position.coords.latitude;
-            const userLng = position.coords.longitude;
-            document.getElementById('status-text').innerText = "Sorting nearest centers...";
+
+            document.getElementById('status-text').innerText = "Location Detected. Updating list...";
+            await loadRealData(position.coords);
+
             try {
-                const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLng}`);
+                const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
                 const geoData = await geoResponse.json();
-                const city = geoData.address.city || geoData.address.town || geoData.address.village || 'Your Area';
+                const city = geoData.address.city || geoData.address.town || geoData.address.village || 'Location Detected';
                 lastKnownLocation = city;
                 localStorage.setItem('lastKnownLocation', city);
                 document.getElementById('header-loc-text').innerText = city;
@@ -362,7 +393,7 @@
 				}
             } catch (e) {
                 console.error("Reverse geocoding failed", e);
-                document.getElementById('header-loc-text').innerText = "GPS Active";
+                document.getElementById('header-loc-text').innerText = "Location Detected";
             }
 
             const locationBar = document.querySelector('.location-bar');
@@ -374,13 +405,9 @@
 				locationBar.style.transformOrigin = `${originX}% 0%`;
 			}
 			locationBar.classList.add('hidden');
-
-            storesData.forEach(store => {
-                store.distance = calculateDistance(userLat, userLng, store.lat, store.lng).toFixed(1);
-            });
-            storesData.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
-            renderFeed();
             document.getElementById('status-text').innerText = "Showing nearest centers.";
+            locateBtn.classList.remove('detecting');
+            btnText.innerText = 'Detect My Location';
         }
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
