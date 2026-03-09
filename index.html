@@ -425,7 +425,6 @@
             switch(error.code) {
                 case error.PERMISSION_DENIED:
                     resetLocationState();
-                    showLocationPrompt();
                     return;
                 case error.POSITION_UNAVAILABLE: message = "Location information is unavailable."; break;
                 case error.TIMEOUT: message = "The request to get user location timed out."; break;
