@@ -237,7 +237,6 @@
                     const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
                     if (permissionStatus.state === 'denied' || permissionStatus.state === 'prompt') {
                         if (localStorage.getItem('locationUsed') === 'true') {
-                            console.log("Location permission lost. Resetting UI.");
                             resetLocationState();
                         }
                     }
