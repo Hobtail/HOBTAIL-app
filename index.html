@@ -409,6 +409,7 @@
         function openDetails(storeId) {
             const store = storesData.find(s => s.id === storeId);
             if (!store) return;
+            window.history.pushState({ sheetOpen: true }, '');
             const detailContent = document.getElementById('detail-content');
             const images = (store.image || '').split(',').map(s => s.trim()).filter(Boolean);
             const videoUrl = (store.video || '').trim();
@@ -465,9 +466,13 @@
         function closeDetails() {
             document.getElementById('sheet-overlay').classList.remove('active');
             document.getElementById('bottom-sheet').classList.remove('active');
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = '';
         }
         
+        window.addEventListener('popstate', function(e) {
+            closeDetails();
+        });
+
         initApp();
     </script>
 </body>
