@@ -455,31 +455,19 @@
             slider.addEventListener('scroll', updateArrows);
             setTimeout(updateArrows, 150);
             nextBtn.onclick = () => slider.scrollBy({ left: slider.clientWidth, behavior: 'smooth' });
-            prevBtn.onclick = () => slider.scrollBy({ left: -clientWidth, behavior: 'smooth' });
+            prevBtn.onclick = () => slider.scrollBy({ left: -slider.clientWidth, behavior: 'smooth' });
 
             document.getElementById('sheet-overlay').classList.add('active');
             document.getElementById('bottom-sheet').classList.add('active');
             document.body.style.overflow = 'hidden'; 
-            window.history.pushState({ bottomSheet: true }, "");
         }
 
         function closeDetails() {
-            const sheetOverlay = document.getElementById('sheet-overlay');
-            if (sheetOverlay.classList.contains('active')) {
-                window.history.back(); 
-            }
+            document.getElementById('sheet-overlay').classList.remove('active');
+            document.getElementById('bottom-sheet').classList.remove('active');
+            document.body.style.overflow = 'auto';
         }
         
-        window.addEventListener('popstate', function(event) {
-            const sheetOverlay = document.getElementById('sheet-overlay');
-            const bottomSheet = document.getElementById('bottom-sheet');
-            if (sheetOverlay.classList.contains('active')) {
-                sheetOverlay.classList.remove('active');
-                bottomSheet.classList.remove('active');
-                document.body.style.overflow = 'auto'; 
-            }
-        });
-
         initApp();
     </script>
 </body>
