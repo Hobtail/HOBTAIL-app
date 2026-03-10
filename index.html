@@ -72,8 +72,8 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            white-space: nowrap;
-            min-height: 42px;
+            line-height: 1.2;
+            text-align: center;
         }
 
         .locate-btn:hover {
@@ -211,7 +211,7 @@
                     <circle cx="12" cy="12" r="10"></circle>
                     <circle cx="12" cy="12" r="3"></circle>
                 </svg>
-                <span id="locate-btn-text">Detect My Location</span>
+                <span id="locate-btn-text">Detect My<br>Location</span>
             </button>
         </div>
         <main class="feed-container" id="feed-view"></main>
@@ -340,9 +340,7 @@
 
         async function loadRealData(coords) {
             try {
-                if (!coords) {
-                    document.getElementById('status-text').innerText = "Syncing Live Database...";
-                }
+                document.getElementById('status-text').innerText = "Syncing Live Database...";
                 const response = await fetch(sheetUrl);
                 const csvText = await response.text();
                 storesData = csvToJson(csvText);
@@ -443,19 +441,19 @@
             const btnText = document.getElementById('locate-btn-text');
 
             locateBtn.classList.add('detecting');
-            btnText.innerText = 'Detecting...';
+            btnText.innerHTML = 'Detecting...<br>&nbsp;';
             document.getElementById('status-text').innerText = "Finding your location...";
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(processLocation, (error) => {
                     showError(error);
                     locateBtn.classList.remove('detecting');
-                    btnText.innerText = 'Detect My Location';
+                    btnText.innerHTML = 'Detect My<br>Location';
                 });
             } else {
                 document.getElementById('status-text').innerText = "GPS not supported by your browser.";
                 locateBtn.classList.remove('detecting');
-                btnText.innerText = 'Detect My Location';
+                btnText.innerHTML = 'Detect My<br>Location';
             }
         }
 
@@ -496,7 +494,7 @@
 			locationBar.classList.add('hidden');
             document.getElementById('status-text').innerText = "Showing nearest centers.";
             locateBtn.classList.remove('detecting');
-            btnText.innerText = 'Detect My Location';
+            btnText.innerHTML = 'Detect My<br>Location';
         }
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
