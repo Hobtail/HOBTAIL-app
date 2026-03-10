@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hobtail - Premium Booking</title>
     <style>
-        /* CSS Variables - Premium Navy Blue */
+        /* CSS Variables - Light Liquid Glass Theme */
         :root {
-            --bg-dark: #0F2247; 
-            --header-bg: #152A55; 
-            --card-bg: #1A3063;
-            --text-light: #F3F4F6;
-            --text-muted: #9CA3AF;
+            --bg-dark: #F4F7FC;
+            --header-bg: rgba(255, 255, 255, 0.7);
+            --card-bg: rgba(255, 255, 255, 0.25);
+            --text-light: #1c2541; /* Dark Blue */
+            --text-muted: #5A6782; /* Muted Blue-Gray */
             --accent-orange: #FF5E00; 
             --accent-orange-dark: #E65500;
         }
@@ -19,8 +20,15 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
 
         body {
-            background: linear-gradient(135deg, #0b132b 0%, #1c2541 100%);
-            color: #ffffff;
+            background-color: #f0f7ff; /* Fallback */
+            background-image: 
+                /* Abstract blurred shapes for depth */
+                radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.7) 0%, transparent 30%),
+                radial-gradient(circle at 85% 75%, rgba(255, 255, 255, 0.6) 0%, transparent 40%),
+                /* Base light gradient */
+                linear-gradient(135deg, #f0f7ff 0%, #d8e7ff 100%);
+            color: var(--text-light);
+            background-attachment: fixed;
             padding-top: 80px; 
             padding-left: 20px;
             padding-right: 20px;
@@ -30,10 +38,12 @@
         /* Fixed Premium Header */
         .app-header {
             position: fixed; top: 0; left: 0; width: 100%; height: 70px;
-            background-color: var(--header-bg); display: flex;
+            background-color: var(--header-bg);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            display: flex;
             justify-content: space-between; align-items: center; padding: 0 30px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08); z-index: 1000;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2); z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
         .brand-block { display: flex; align-items: center; gap: 10px; }
@@ -45,10 +55,10 @@
         .location-bar {
             max-width: 1200px; margin: 20px auto 30px auto; display: flex;
             justify-content: space-between; align-items: center;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 24px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             padding: 15px 25px;
@@ -77,8 +87,8 @@
         }
 
         .locate-btn:hover {
-            background-color: rgba(255, 94, 0, 0.15);
-            box-shadow: 0 0 15px rgba(255, 94, 0, 0.3);
+            background-color: rgba(255, 94, 0, 0.1);
+            box-shadow: 0 0 15px rgba(255, 94, 0, 0.2);
         }
 
         .locate-btn:active {
@@ -102,20 +112,20 @@
         }
 
         .store-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
             overflow: hidden;
             transition: transform 0.3s ease;
         }
-        .store-card:hover { transform: translateY(-5px); border-color: rgba(255, 94, 0, 0.5); }
-        .card-image { width: 100%; height: 180px; object-fit: cover; background: #2a3f7a; }
+        .store-card:hover { transform: translateY(-5px); border-color: rgba(255, 255, 255, 0.5); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); }
+        .card-image { width: 100%; height: 180px; object-fit: cover; background: #eaf2ff; }
         .card-content { padding: 20px; }
-        .store-title { font-size: 1.2rem; margin-bottom: 5px; }
+        .store-title { font-size: 1.2rem; margin-bottom: 5px; color: var(--text-light); }
         .distance-tag {
             display: inline-block; background-color: rgba(255, 94, 0, 0.1);
             color: var(--accent-orange); padding: 4px 10px; border-radius: 6px;
@@ -123,14 +133,14 @@
         }
         .view-btn {
             width: 100%; background-color: transparent; color: var(--text-light);
-            border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px;
+            border: 1px solid rgba(28, 37, 65, 0.2); padding: 12px;
             border-radius: 10px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;
         }
-        .view-btn:hover { background-color: var(--accent-orange); border-color: var(--accent-orange); }
+        .view-btn:hover { background-color: var(--accent-orange); border-color: var(--accent-orange); color: white; }
 
         /* Zomato Style Bottom Sheet */
-        .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1999; opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(3px); }
-        .bottom-sheet { position: fixed; bottom: -100%; left: 0; width: 100%; max-height: 85vh; background-color: var(--card-bg); border-radius: 24px 24px 0 0; z-index: 2000; padding: 20px 20px 40px 20px; overflow-y: auto; transition: bottom 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 -5px 25px rgba(0,0,0,0.5); }
+        .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 1999; opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(3px); }
+        .bottom-sheet { position: fixed; bottom: -100%; left: 0; width: 100%; max-height: 85vh; background-color: #f8f9fa; border-radius: 24px 24px 0 0; z-index: 2000; padding: 20px 20px 40px 20px; overflow-y: auto; transition: bottom 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 -5px 25px rgba(0,0,0,0.1); }
         .bottom-sheet-overlay.active { opacity: 1; visibility: visible; }
         .bottom-sheet.active { bottom: 0; }
         .bottom-sheet.fullscreen { max-height: 100vh; height: 100vh; border-radius: 0; padding-top: 40px; }
@@ -140,7 +150,7 @@
         .image-slider { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
         .image-slider::-webkit-scrollbar { display: none; }
         .slider-item { flex: 0 0 100%; scroll-snap-align: center; height: 100%; display: flex; align-items: center; justify-content: center; }
-        .slider-item img, .slider-item video { width: 100%; height: 100%; object-fit: contain; background: #111; }
+        .slider-item img, .slider-item video { width: 100%; height: 100%; object-fit: contain; background: #eee; }
         .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: var(--accent-orange); color: white; border: none; width: 42px; height: 42px; border-radius: 50%; z-index: 10; cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 2px 8px rgba(0,0,0,0.4); transition: opacity 0.3s; }
         .prev-btn { left: 10px; }
         .next-btn { right: 10px; }
@@ -158,13 +168,14 @@
             box-sizing: border-box;
             margin: 0;
             z-index: 1000;
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(240, 248, 255, 0.8);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             display: flex;
             justify-content: space-around;
             padding: 10px 0;
             transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border-top: 1px solid rgba(255,255,255,0.4);
         }
 
         .bottom-nav.hidden {
@@ -221,7 +232,7 @@
                 <span id="locate-btn-text">Detect My<br>Location</span>
             </button>
         </div>
-        <h3 style="color: #ffffff; font-size: 18px; font-weight: 600; margin: 24px 16px 12px 16px; letter-spacing: 0.5px;">🐾 Top Rated Clinics Near You</h3>
+        <h3 style="color: #1c2541; font-size: 18px; font-weight: 600; margin: 24px 16px 12px 16px; letter-spacing: 0.5px;">🐾 Top Rated Clinics Near You</h3>
         <main class="feed-container" id="feed-view"></main>
     </div>
 
@@ -427,7 +438,7 @@
 
                 feedView.innerHTML += `
                     <article class="store-card" onclick="openDetails('${store.id}')">
-                        <img src="${store.cover || ''}" alt="${store.name}" class="card-image" onerror="this.style.background='#2a3f7a'">
+                        <img src="${store.cover || ''}" alt="${store.name}" class="card-image" onerror="this.style.background='#eaf2ff'">
                         <div class="card-content">
                             <h3 class="store-title">${store.name}</h3>
                             ${distanceTag}
@@ -553,15 +564,15 @@
                     <button class="nav-btn next-btn" id="goNext">&#10095;</button>
                 </div>
                 <div style="padding: 15px;">
-                    <h1 style="font-size: 1.8rem; margin: 0; margin-bottom: 5px;">${store.name}</h1>
+                    <h1 style="font-size: 1.8rem; margin: 0; margin-bottom: 5px; color: var(--text-light);">${store.name}</h1>
                     <p style="color: var(--text-muted); margin-bottom: 15px; display: flex; align-items: flex-start; gap: 6px;">
                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="flex-shrink: 0; margin-top: 2px;">
                           <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                         </svg>
                         <span>${store.address}</span>
                     </p>
-                    <h3>About Clinic</h3>
-                    <p class="about-text" style="line-height: 1.6; color: var(--text-light); font-size: 0.95rem; margin-bottom: 30px;">${store.about || 'Premium care for your beloved pets.'}</p>
+                    <h3 style="color: var(--text-light);">About Clinic</h3>
+                    <p class="about-text" style="line-height: 1.6; color: var(--text-muted); font-size: 0.95rem; margin-bottom: 30px;">${store.about || 'Premium care for your beloved pets.'}</p>
                     <button class="book-btn" onclick="alert('Booking feature coming soon!')">Book Appointment</button>
                 </div>
             `;
