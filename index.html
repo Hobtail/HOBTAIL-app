@@ -281,15 +281,20 @@
                 if (!navigator.permissions) return;
                 try {
                     const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
-                    if (permissionStatus.state === 'denied' || permissionStatus.state === 'prompt') {
+                    if (permissionStatus.state === 'denied') {
                         if (localStorage.getItem('locationUsed') === 'true') {
                             resetLocationState();
+                        }
+                    } else if (permissionStatus.state === 'granted') {
+                        const locationBar = document.querySelector('.location-bar');
+                        if (!locationBar.classList.contains('hidden')) {
+                            navigator.geolocation.getCurrentPosition(processLocation, () => {});
                         }
                     }
                 } catch (e) {
                     // console.error("Error checking location permission:", e);
                 }
-            }, 2000); 
+            }, 3000); 
         }
 
         async function initApp() {
