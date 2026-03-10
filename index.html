@@ -72,6 +72,8 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            white-space: nowrap;
+            min-height: 42px;
         }
 
         .locate-btn:hover {
@@ -338,7 +340,9 @@
 
         async function loadRealData(coords) {
             try {
-                document.getElementById('status-text').innerText = "Syncing Live Database...";
+                if (!coords) {
+                    document.getElementById('status-text').innerText = "Syncing Live Database...";
+                }
                 const response = await fetch(sheetUrl);
                 const csvText = await response.text();
                 storesData = csvToJson(csvText);
@@ -352,8 +356,11 @@
                     storesData.forEach(store => store.distance = "Calculating...");
                 }
 
-                document.getElementById('status-text').innerText = "Live Data loaded successfully.";
                 renderFeed();
+
+                if (!coords) {
+                    document.getElementById('status-text').innerText = "Please enable location for accurate distances.";
+                }
 
             } catch (error) {
                 console.error("Error loading Live Database:", error);
