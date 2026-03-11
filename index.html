@@ -68,27 +68,66 @@
             border-radius: 50px;
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
         }
 
         .search-icon {
             font-size: 16px;
             margin-right: 12px;
             opacity: 0.7;
+            z-index: 3;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            flex: 1;
+            height: 20px; 
         }
 
         #animated-search {
-            flex: 1;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: transparent;
             border: none;
             outline: none;
             color: #ffffff;
             font-size: 15px;
             font-weight: 400;
+            z-index: 2;
         }
 
-        #animated-search::placeholder {
+        .rolling-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        .rolling-placeholder.hidden {
+            opacity: 0;
+        }
+
+        #rolling-text-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transition: top 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        #rolling-text-wrapper span {
+            display: block;
+            line-height: 20px;
             color: rgba(255, 255, 255, 0.6);
-            transition: opacity 0.5s ease;
         }
 
         .user-status { font-size: 1rem; color: var(--text-muted); }
@@ -251,7 +290,18 @@
         </div>
         <div class="premium-search-container">
             <span class="search-icon">🔍</span>
-            <input type="text" id="animated-search" placeholder="Search best clinics...">
+            <div class="search-input-wrapper">
+                <input type="text" id="animated-search">
+                <div id="rolling-placeholder-container" class="rolling-placeholder">
+                    <div id="rolling-text-wrapper">
+                        <span>Search 'Best Clinics'...</span>
+                        <span>Find nearest 'Grooming'...</span>
+                        <span>Search 'Pet Medicines'...</span>
+                        <span>Find 'Pet Boarding'...</span>
+                        <span>Search 'Best Clinics'...</span>
+                    </div>
+                </div>
+            </div>
         </div>
         <h3 style="color: #ffffff; font-size: 18px; font-weight: 600; margin: 24px 16px 12px 16px; letter-spacing: 0.5px;">🐾 Top Rated Clinics Near You</h3>
         <main class="feed-container" id="feed-view"></main>
@@ -634,25 +684,68 @@
             } else {
                 bottomNav.classList.remove('hidden');
             }
-            lastScrolltop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
+            lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
         }, false);
 
         initApp();
 
-        const searchPlaceholders = [
-            "Search 'Best Clinics'...",
-            "Find nearest 'Grooming'...",
-            "Search 'Pet Medicines'...",
-            "Find 'Pet Boarding'..."
-        ];
-        let placeholderIndex = 0;
-        setInterval(() => {
-            const searchInput = document.getElementById('animated-search');
-            if (searchInput) {
-                placeholderIndex = (placeholderIndex + 1) % searchPlaceholders.length;
-                searchInput.placeholder = searchPlaceholders[placeholderIndex];
-            }
-        }, 2500);
+        // --- Vertical Rolling Placeholder Logic ---
+        const searchInput = document.getElementById('animated-search');
+        const placeholderContainer = document.getElementById('rolling-placeholder-container');
+        const textWrapper = document.getElementById('rolling-text-wrapper');
+        if (searchInput && placeholderContainer && textWrapper) {
+            const placeholderItems = textWrapper.querySelectorAll('span');
+            const itemHeight = 20; // Should match the line-height in CSS
+            let currentIndex = 0;
+            let rollInterval;
+
+            const startRolling = () => {
+                if(rollInterval) clearInterval(rollInterval);
+                rollInterval = setInterval(() => {
+                    currentIndex++;
+                    textWrapper.style.top = `-${currentIndex * itemHeight}px`;
+                    if (currentIndex >= placeholderItems.length - 1) {
+                        setTimeout(() => {
+                            textWrapper.style.transition = 'none';
+                            currentIndex = 0;
+                            textWrapper.style.top = '0px';
+                            void textWrapper.offsetWidth; 
+                            textWrapper.style.transition = 'top 0.6s cubic-bezier(0.77, 0, 0.175, 1)';
+                        }, 700);
+                    }
+                }, 2500);
+            };
+
+            const stopRolling = () => {
+                clearInterval(rollInterval);
+            };
+
+            searchInput.addEventListener('focus', () => {
+                placeholderContainer.classList.add('hidden');
+                stopRolling();
+            });
+
+            searchInput.addEventListener('blur', () => {
+                if (searchInput.value.trim() === '') {
+                    placeholderContainer.classList.remove('hidden');
+                    startRolling();
+                }
+            });
+
+            searchInput.addEventListener('input', () => {
+                if (searchInput.value.trim() !== '') {
+                    placeholderContainer.classList.add('hidden');
+                    stopRolling();
+                } else {
+                    if (document.activeElement !== searchInput) {
+                        placeholderContainer.classList.remove('hidden');
+                        startRolling();
+                    }
+                }
+            });
+
+            startRolling();
+        }
     </script>
 </body>
 </html>
