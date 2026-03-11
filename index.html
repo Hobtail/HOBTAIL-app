@@ -56,6 +56,40 @@
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
     		will-change: transform, opacity;
         }
+        
+        .premium-search-container {
+            margin: 16px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-icon {
+            font-size: 16px;
+            margin-right: 12px;
+            opacity: 0.7;
+        }
+
+        #animated-search {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        #animated-search::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            transition: opacity 0.5s ease;
+        }
 
         .user-status { font-size: 1rem; color: var(--text-muted); }
         
@@ -214,6 +248,10 @@
                 </svg>
                 <span id="locate-btn-text">Detect My<br>Location</span>
             </button>
+        </div>
+        <div class="premium-search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="animated-search" placeholder="Search best clinics...">
         </div>
         <h3 style="color: #ffffff; font-size: 18px; font-weight: 600; margin: 24px 16px 12px 16px; letter-spacing: 0.5px;">🐾 Top Rated Clinics Near You</h3>
         <main class="feed-container" id="feed-view"></main>
@@ -596,10 +634,25 @@
             } else {
                 bottomNav.classList.remove('hidden');
             }
-            lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
+            lastScrolltop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
         }, false);
 
         initApp();
+
+        const searchPlaceholders = [
+            "Search 'Best Clinics'...",
+            "Find nearest 'Grooming'...",
+            "Search 'Pet Medicines'...",
+            "Find 'Pet Boarding'..."
+        ];
+        let placeholderIndex = 0;
+        setInterval(() => {
+            const searchInput = document.getElementById('animated-search');
+            if (searchInput) {
+                placeholderIndex = (placeholderIndex + 1) % searchPlaceholders.length;
+                searchInput.placeholder = searchPlaceholders[placeholderIndex];
+            }
+        }, 2500);
     </script>
 </body>
 </html>
