@@ -69,6 +69,7 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             position: relative;
+            cursor: pointer;
         }
 
         .search-icon {
@@ -97,6 +98,7 @@
             font-size: 15px;
             font-weight: 400;
             z-index: 2;
+            pointer-events: none; /* So the click goes to the container */
         }
 
         .rolling-placeholder {
@@ -259,6 +261,132 @@
         .nav-item span {
             font-size: 12px;
         }
+        
+        /* --- Full-Screen Search Overlay --- */
+        .search-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2001; /* Higher than other elements */
+            background: rgba(11, 19, 43, 0.7);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+            color: white;
+        }
+
+        .search-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .search-overlay-top-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .back-icon {
+            cursor: pointer;
+            margin-right: 15px;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        .back-icon:hover {
+            opacity: 1;
+        }
+
+        #active-search {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 500;
+            padding: 10px 0;
+            border-bottom: 1.5px solid rgba(255, 255, 255, 0.3);
+        }
+
+        #active-search::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        #trending-searches p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        #search-results {
+            display: none; /* Hidden by default */
+            max-height: calc(100% - 80px);
+            overflow-y: auto;
+        }
+
+        /* Micro-card styling */
+        .micro-card {
+            display: flex;
+            align-items: center;
+            padding: 12px 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .micro-card:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .micro-card img {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+            background: #2a3f7a;
+        }
+
+        .micro-card-info {
+            flex: 1;
+        }
+
+        .micro-card-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 3px 0;
+            color: var(--text-light);
+        }
+
+        .micro-card-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .micro-card-action {
+            padding: 5px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            background-color: var(--accent-orange);
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .micro-card-action:hover {
+            background-color: var(--accent-orange-dark);
+        }
+
+        .highlight {
+            color: #ff9800;
+            font-weight: bold;
+        }
 
     </style>
 </head>
@@ -331,6 +459,21 @@
             <span>Profile</span>
         </a>
     </nav>
+
+    <div id="search-overlay" class="search-overlay">
+        <div class="search-overlay-top-bar">
+            <svg class="back-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+            </svg>
+            <input id="active-search" type="text" placeholder="Search clinics, grooming...">
+        </div>
+        <div id="trending-searches">
+            <p>🔥 Trending: Pet Grooming, Dog Toys, Divine Clinic</p>
+        </div>
+        <div id="search-results">
+            <!-- Micro-cards will be injected here -->
+        </div>
+    </div>
 
     <script>
         let storesData = []; 
@@ -746,6 +889,84 @@
 
             startRolling();
         }
+
+        // --- Full-Screen Search Logic ---
+        document.addEventListener('DOMContentLoaded', () => { // Wait for DOM to be ready
+            const mainSearchBarContainer = document.querySelector('.premium-search-container');
+            const searchOverlay = document.getElementById('search-overlay');
+            const activeSearchInput = document.getElementById('active-search');
+            const backButton = searchOverlay.querySelector('.back-icon');
+            const trendingSearches = document.getElementById('trending-searches');
+            const searchResultsContainer = document.getElementById('search-results');
+
+            function openSearch() {
+                searchOverlay.classList.add('active');
+                setTimeout(() => activeSearchInput.focus(), 300); // Focus after transition
+            }
+
+            function closeSearch() {
+                searchOverlay.classList.remove('active');
+                activeSearchInput.value = '';
+                activeSearchInput.dispatchEvent(new Event('input')); // Reset view
+            }
+
+            if (mainSearchBarContainer && searchOverlay && activeSearchInput && backButton && trendingSearches && searchResultsContainer) {
+                mainSearchBarContainer.addEventListener('click', openSearch);
+                backButton.addEventListener('click', closeSearch);
+
+                activeSearchInput.addEventListener('input', () => {
+                    const query = activeSearchInput.value.trim().toLowerCase();
+
+                    if (query === '') {
+                        trendingSearches.style.display = 'block';
+                        searchResultsContainer.style.display = 'none';
+                        searchResultsContainer.innerHTML = '';
+                        return;
+                    }
+
+                    trendingSearches.style.display = 'none';
+                    searchResultsContainer.style.display = 'block';
+
+                    const filteredStores = storesData.filter(store => 
+                        store.name.toLowerCase().includes(query)
+                    );
+
+                    let resultsHtml = '';
+                    if (filteredStores.length > 0) {
+                        filteredStores.forEach(store => {
+                            const regex = new RegExp(`(${query})`, 'gi');
+                            const highlightedName = store.name.replace(regex, '<span class="highlight">$1</span>');
+
+                            resultsHtml += `
+                                <div class="micro-card" data-store-id="${store.id}">
+                                    <img src="${store.cover || ''}" alt="${store.name}" onerror="this.style.background='#2a3f7a'">
+                                    <div class="micro-card-info">
+                                        <h4>${highlightedName}</h4>
+                                        <p>${store.address || 'Address not available'}</p>
+                                    </div>
+                                    <a class="micro-card-action">View</a>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        resultsHtml = '<p style="padding: 20px 5px;">No clinics found matching your search.</p>';
+                    }
+                    searchResultsContainer.innerHTML = resultsHtml;
+                });
+
+                searchResultsContainer.addEventListener('click', (e) => {
+                    const actionButton = e.target.closest('.micro-card-action');
+                    if (actionButton) {
+                        const card = actionButton.closest('.micro-card');
+                        const storeId = card.dataset.storeId;
+                        if (storeId) {
+                            openDetails(storeId);
+                            closeSearch();
+                        }
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
