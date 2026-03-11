@@ -257,7 +257,7 @@
             height: 24px;
             margin-bottom: 4px;
         }
-
+        
         .nav-item span {
             font-size: 12px;
         }
@@ -269,18 +269,21 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 2001; /* Higher than other elements */
+            z-index: 2001; 
             background: rgba(11, 19, 43, 0.7);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
             padding: 20px;
             color: white;
+            transform-origin: center top;
+            transform: scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .search-overlay.active {
+            transform: scale(1);
             opacity: 1;
             pointer-events: all;
         }
@@ -294,8 +297,14 @@
         .back-icon {
             cursor: pointer;
             margin-right: 15px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .search-overlay.active .back-icon {
             opacity: 0.8;
-            transition: opacity 0.2s;
+            transform: translateY(0);
+            transition-delay: 0.2s;
         }
         .back-icon:hover {
             opacity: 1;
@@ -311,10 +320,32 @@
             font-weight: 500;
             padding: 10px 0;
             border-bottom: 1.5px solid rgba(255, 255, 255, 0.3);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .search-overlay.active #active-search {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.2s;
         }
 
         #active-search::placeholder {
             color: rgba(255, 255, 255, 0.5);
+        }
+
+        #trending-searches, #search-results {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        
+        .search-overlay.active #trending-searches,
+        .search-overlay.active #search-results {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.3s;
         }
 
         #trending-searches p {
@@ -324,7 +355,7 @@
         }
 
         #search-results {
-            display: none; /* Hidden by default */
+            display: none; 
             max-height: calc(100% - 80px);
             overflow-y: auto;
         }
@@ -891,7 +922,7 @@
         }
 
         // --- Full-Screen Search Logic ---
-        document.addEventListener('DOMContentLoaded', () => { // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', () => { 
             const mainSearchBarContainer = document.querySelector('.premium-search-container');
             const searchOverlay = document.getElementById('search-overlay');
             const activeSearchInput = document.getElementById('active-search');
@@ -900,19 +931,27 @@
             const searchResultsContainer = document.getElementById('search-results');
 
             function openSearch() {
+                if (searchOverlay.classList.contains('active')) return;
+                history.pushState({ searchOpen: true }, '', '#search');
                 searchOverlay.classList.add('active');
-                setTimeout(() => activeSearchInput.focus(), 300); // Focus after transition
+                setTimeout(() => activeSearchInput.focus(), 400); 
             }
 
             function closeSearch() {
                 searchOverlay.classList.remove('active');
                 activeSearchInput.value = '';
-                activeSearchInput.dispatchEvent(new Event('input')); // Reset view
+                activeSearchInput.dispatchEvent(new Event('input'));
             }
+
+            window.addEventListener('popstate', () => {
+                if (searchOverlay.classList.contains('active')) {
+                    closeSearch();
+                }
+            });
 
             if (mainSearchBarContainer && searchOverlay && activeSearchInput && backButton && trendingSearches && searchResultsContainer) {
                 mainSearchBarContainer.addEventListener('click', openSearch);
-                backButton.addEventListener('click', closeSearch);
+                backButton.addEventListener('click', () => history.back());
 
                 activeSearchInput.addEventListener('input', () => {
                     const query = activeSearchInput.value.trim().toLowerCase();
@@ -961,7 +1000,7 @@
                         const storeId = card.dataset.storeId;
                         if (storeId) {
                             openDetails(storeId);
-                            closeSearch();
+                            history.back(); // To close the search overlay
                         }
                     }
                 });
