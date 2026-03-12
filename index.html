@@ -490,7 +490,7 @@
             </svg>
             <div class="active-search-wrapper">
                 <input id="active-search" type="text" placeholder="Search clinics, grooming...">
-                <svg class="search-mic-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); cursor: pointer;"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                <svg id="voice-search-btn" class="search-mic-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); cursor: pointer;"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
             </div>
         </div>
         <div id="trending-searches">
@@ -923,6 +923,7 @@
             const backButton = searchOverlay.querySelector('.back-icon');
             const trendingSearches = document.getElementById('trending-searches');
             const searchResultsContainer = document.getElementById('search-results');
+            const voiceSearchBtn = document.getElementById('voice-search-btn');
 
             function openSearch() {
                 if (searchOverlay.classList.contains('active')) return;
@@ -1011,6 +1012,33 @@
                         }
                     }
                 });
+
+                // --- Voice Search Logic ---
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (SpeechRecognition && voiceSearchBtn) {
+                    const recognition = new SpeechRecognition();
+                    recognition.lang = 'en-US';
+
+                    recognition.onresult = (event) => {
+                        const transcript = event.results[0][0].transcript;
+                        activeSearchInput.value = transcript;
+                        activeSearchInput.dispatchEvent(new Event('input'));
+                    };
+
+                    voiceSearchBtn.addEventListener('click', () => {
+                        try {
+                            recognition.start();
+                        } catch(e) {
+                            console.error("Voice recognition could not be started.", e);
+                        }
+                    });
+
+                    recognition.onerror = (event) => {
+                        console.error("Speech recognition error:", event.error);
+                    }
+                } else if (voiceSearchBtn) {
+                    voiceSearchBtn.style.display = 'none';
+                }
             }
         });
     </script>
