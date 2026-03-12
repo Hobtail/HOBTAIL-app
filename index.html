@@ -295,13 +295,13 @@
             margin-bottom: 25px;
         }
 
-        .back-icon, #active-search, #trending-searches, #search-results {
+        .back-icon, .active-search-wrapper, #trending-searches, #search-results {
             transform: translateY(20px);
             opacity: 0;
             transition: all 0.4s ease;
         }
 
-        .search-overlay.active .back-icon, .search-overlay.active #active-search {
+        .search-overlay.active .back-icon, .search-overlay.active .active-search-wrapper {
             transform: translateY(0);
             opacity: 1;
             transition-delay: 0.2s;
@@ -319,16 +319,31 @@
         }
         .back-icon:hover { opacity: 1; }
 
-        #active-search {
+        .active-search-wrapper {
+            position: relative;
             flex: 1;
+        }
+
+        #active-search {
+            width: 100%;
             background: transparent;
             border: none;
             outline: none;
             color: #ffffff;
             font-size: 18px;
             font-weight: 500;
-            padding: 10px 0;
+            padding: 10px 40px 10px 0;
             border-bottom: 1.5px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .mic-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 18px;
+            cursor: pointer;
         }
 
         #active-search::placeholder {
@@ -483,10 +498,13 @@
             <svg class="back-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
                 <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
             </svg>
-            <input id="active-search" type="text" placeholder="Search clinics, grooming...">
+            <div class="active-search-wrapper">
+                <input id="active-search" type="text" placeholder="Search clinics, grooming...">
+                <span class="mic-icon">🎤</span>
+            </div>
         </div>
         <div id="trending-searches">
-            <p>🔥 Trending: Pet Grooming, Dog Toys, Divine Clinic</p>
+            <p>🔥 Trending: Pet Grooming, Pet Store, Divine Clinic</p>
         </div>
         <div id="search-results">
             <!-- Micro-cards will be injected here -->
@@ -826,7 +844,7 @@
             document.getElementById('sheet-overlay').classList.add('active');
             document.getElementById('bottom-sheet').classList.add('active');
             document.body.style.overflow = 'hidden'; 
-            history.pushState({detailsOpen: true}, '', `#details-${storeId}`);
+            history.pushState({detailsOpen: true}, '', `#details-${store.id}`);
         }
 
         function closeDetails() {
@@ -982,22 +1000,24 @@
                 });
 
                 searchResultsContainer.addEventListener('click', (e) => {
-                    const actionButton = e.target.closest('.micro-card-action');
-                    if (actionButton) {
-                        const card = actionButton.closest('.micro-card');
+                    const card = e.target.closest('.micro-card');
+                    if (card) {
                         const storeId = card.dataset.storeId;
-
                         if (storeId) {
-                            history.back();
-                            setTimeout(() => {
-                                const targetCard = document.querySelector(`.store-card[data-store-id="${storeId}"]`);
-                                if (targetCard) {
-                                    targetCard.scrollIntoView({
-                                        behavior: 'smooth',
-                                        block: 'center'
-                                    });
-                                }
-                            }, 450); 
+                            if (e.target.classList.contains('micro-card-action')) {
+                                history.back(); 
+                                setTimeout(() => {
+                                    const targetCard = document.querySelector(`.store-card[data-store-id="${storeId}"]`);
+                                    if (targetCard) {
+                                        targetCard.scrollIntoView({
+                                            behavior: 'smooth',
+                                            block: 'center'
+                                        });
+                                    }
+                                }, 450); 
+                            } else {
+                                openDetails(storeId);
+                            }
                         }
                     }
                 });
