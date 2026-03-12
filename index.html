@@ -98,7 +98,7 @@
             font-size: 15px;
             font-weight: 400;
             z-index: 2;
-            pointer-events: none; /* So the click goes to the container */
+            pointer-events: none; 
         }
 
         .rolling-placeholder {
@@ -134,7 +134,6 @@
 
         .user-status { font-size: 1rem; color: var(--text-muted); }
         
-        /* Professional Button States */
         .locate-btn {
             display: flex;
             align-items: center;
@@ -197,7 +196,7 @@
         }
         .view-btn:hover { background-color: var(--accent-orange); border-color: var(--accent-orange); }
 
-        /* Zomato Style Bottom Sheet */
+        /* Bottom Sheet */
         .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1999; opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(3px); }
         .bottom-sheet { position: fixed; bottom: -100%; left: 0; width: 100%; max-height: 85vh; background-color: var(--card-bg); border-radius: 24px 24px 0 0; z-index: 2000; padding: 20px 20px 40px 20px; overflow-y: auto; transition: bottom 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 -5px 25px rgba(0,0,0,0.5); }
         .bottom-sheet-overlay.active { opacity: 1; visibility: visible; }
@@ -275,9 +274,10 @@
             -webkit-backdrop-filter: blur(25px);
             padding: 20px;
             color: white;
-            transform-origin: center top;
-            transform: scale(0.95);
+            transform-origin: top center;
+            transform: scale(0);
             opacity: 0;
+            border-radius: 50%;
             pointer-events: none;
             transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
@@ -285,6 +285,7 @@
         .search-overlay.active {
             transform: scale(1);
             opacity: 1;
+            border-radius: 0;
             pointer-events: all;
         }
 
@@ -294,21 +295,29 @@
             margin-bottom: 25px;
         }
 
+        .back-icon, #active-search, #trending-searches, #search-results {
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .search-overlay.active .back-icon, .search-overlay.active #active-search {
+            transform: translateY(0);
+            opacity: 1;
+            transition-delay: 0.2s;
+        }
+        .search-overlay.active .back-icon { opacity: 0.8; }
+        .search-overlay.active #trending-searches, .search-overlay.active #search-results {
+            transform: translateY(0);
+            opacity: 1;
+            transition-delay: 0.3s;
+        }
+
         .back-icon {
             cursor: pointer;
             margin-right: 15px;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
         }
-        .search-overlay.active .back-icon {
-            opacity: 0.8;
-            transform: translateY(0);
-            transition-delay: 0.2s;
-        }
-        .back-icon:hover {
-            opacity: 1;
-        }
+        .back-icon:hover { opacity: 1; }
 
         #active-search {
             flex: 1;
@@ -320,32 +329,10 @@
             font-weight: 500;
             padding: 10px 0;
             border-bottom: 1.5px solid rgba(255, 255, 255, 0.3);
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-
-        .search-overlay.active #active-search {
-            opacity: 1;
-            transform: translateY(0);
-            transition-delay: 0.2s;
         }
 
         #active-search::placeholder {
             color: rgba(255, 255, 255, 0.5);
-        }
-
-        #trending-searches, #search-results {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-        
-        .search-overlay.active #trending-searches,
-        .search-overlay.active #search-results {
-            opacity: 1;
-            transform: translateY(0);
-            transition-delay: 0.3s;
         }
 
         #trending-searches p {
@@ -466,7 +453,7 @@
         <main class="feed-container" id="feed-view"></main>
     </div>
 
-    <div class="bottom-sheet-overlay" id="sheet-overlay" onclick="closeDetails()"></div>
+    <div class="bottom-sheet-overlay" id="sheet-overlay"></div>
     <div class="bottom-sheet" id="bottom-sheet">
         <div class="sheet-drag-handle"></div>
         <div id="detail-content"></div>
@@ -596,7 +583,6 @@
                         resetLocationState();
                     }
                 } catch(e) {
-                    // console.log("Permission API not supported. Asking directly.");
                     getUserLocation();
                 }
             }
@@ -660,7 +646,6 @@
                 for (let j = 0; j < headers.length; j++) {
                     if (headers[j]) {
                          let value = currentline[j] || '';
-                         // Remove surrounding quotes if they exist, but keep internal ones
                          if (value.startsWith('"') && value.endsWith('"')) {
                              value = value.slice(1, -1);
                          }
@@ -682,7 +667,7 @@
                     : '';
 
                 feedView.innerHTML += `
-                    <article class="store-card" onclick="openDetails('${store.id}')">
+                    <article class="store-card" data-store-id="${store.id}" onclick="openDetails('${store.id}')">
                         <img src="${store.cover || ''}" alt="${store.name}" class="card-image" onerror="this.style.background='#2a3f7a'">
                         <div class="card-content">
                             <h3 class="store-title">${store.name}</h3>
@@ -785,6 +770,9 @@
         }
 
         function openDetails(storeId) {
+            if (document.getElementById('search-overlay').classList.contains('active')) {
+                history.back();
+            }
             const store = storesData.find(s => s.id === storeId);
             if (!store) return;
             const detailContent = document.getElementById('detail-content');
@@ -838,7 +826,7 @@
             document.getElementById('sheet-overlay').classList.add('active');
             document.getElementById('bottom-sheet').classList.add('active');
             document.body.style.overflow = 'hidden'; 
-            window.history.pushState({open:true}, '');
+            history.pushState({detailsOpen: true}, '', `#details-${storeId}`);
         }
 
         function closeDetails() {
@@ -847,8 +835,6 @@
             document.body.style.overflow = '';
         }
         
-        window.addEventListener('popstate', () => closeDetails());
-
         let lastScrollTop = 0;
         const bottomNav = document.getElementById('bottom-nav');
         window.addEventListener("scroll", function(){
@@ -858,7 +844,7 @@
             } else {
                 bottomNav.classList.remove('hidden');
             }
-            lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
+            lastScrollTop = st <= 0 ? 0 : st; 
         }, false);
 
         initApp();
@@ -869,7 +855,7 @@
         const textWrapper = document.getElementById('rolling-text-wrapper');
         if (searchInput && placeholderContainer && textWrapper) {
             const placeholderItems = textWrapper.querySelectorAll('span');
-            const itemHeight = 20; // Should match the line-height in CSS
+            const itemHeight = 20; 
             let currentIndex = 0;
             let rollInterval;
 
@@ -943,9 +929,11 @@
                 activeSearchInput.dispatchEvent(new Event('input'));
             }
 
-            window.addEventListener('popstate', () => {
+            window.addEventListener('popstate', (event) => {
                 if (searchOverlay.classList.contains('active')) {
                     closeSearch();
+                } else if (document.getElementById('bottom-sheet').classList.contains('active')) {
+                    closeDetails();
                 }
             });
 
@@ -998,9 +986,18 @@
                     if (actionButton) {
                         const card = actionButton.closest('.micro-card');
                         const storeId = card.dataset.storeId;
+
                         if (storeId) {
-                            openDetails(storeId);
-                            history.back(); // To close the search overlay
+                            history.back();
+                            setTimeout(() => {
+                                const targetCard = document.querySelector(`.store-card[data-store-id="${storeId}"]`);
+                                if (targetCard) {
+                                    targetCard.scrollIntoView({
+                                        behavior: 'smooth',
+                                        block: 'center'
+                                    });
+                                }
+                            }, 450); 
                         }
                     }
                 });
