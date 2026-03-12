@@ -340,6 +340,17 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
+        @keyframes pulse-mic {
+            0% { transform: translateY(-50%) scale(1); fill: none; }
+            50% { transform: translateY(-50%) scale(1.2); fill: rgba(255, 68, 68, 0.2); stroke: #ff4444; }
+            100% { transform: translateY(-50%) scale(1); fill: none; }
+        }
+
+        #voice-search-btn.listening {
+            animation: pulse-mic 1s infinite;
+            stroke: #ff4444;
+        }
+
         #trending-searches p {
             color: rgba(255, 255, 255, 0.9);
             font-size: 15px;
@@ -951,7 +962,7 @@
                 backButton.addEventListener('click', () => history.back());
 
                 activeSearchInput.addEventListener('input', () => {
-                    const query = activeSearchInput.value.trim().toLowerCase();
+                    const query = activeSearchInput.value.trim();
 
                     if (query === '') {
                         trendingSearches.style.display = 'block';
@@ -963,14 +974,16 @@
                     trendingSearches.style.display = 'none';
                     searchResultsContainer.style.display = 'block';
 
-                    const filteredStores = storesData.filter(store => 
-                        store.name.toLowerCase().includes(query)
-                    );
+                    const searchWords = query.toLowerCase().split(' ').filter(w => w !== '');
+                    const filteredStores = storesData.filter(store => {
+                        const storeNameLower = store.name.toLowerCase();
+                        return searchWords.every(word => storeNameLower.includes(word));
+                    });
 
                     let resultsHtml = '';
                     if (filteredStores.length > 0) {
                         filteredStores.forEach(store => {
-                            const regex = new RegExp(`(${query})`, 'gi');
+                            const regex = new RegExp(`(${searchWords.join('|')})`, 'gi');
                             const highlightedName = store.name.replace(regex, '<span class="highlight">$1</span>');
 
                             resultsHtml += `
@@ -1018,6 +1031,17 @@
                 if (SpeechRecognition && voiceSearchBtn) {
                     const recognition = new SpeechRecognition();
                     recognition.lang = 'en-US';
+                    const originalPlaceholder = activeSearchInput.placeholder;
+
+                    recognition.onstart = () => {
+                        voiceSearchBtn.classList.add('listening');
+                        activeSearchInput.placeholder = 'Listening... 🎤';
+                    };
+
+                    recognition.onend = () => {
+                        voiceSearchBtn.classList.remove('listening');
+                        activeSearchInput.placeholder = originalPlaceholder;
+                    };
 
                     recognition.onresult = (event) => {
                         const transcript = event.results[0][0].transcript;
@@ -1034,6 +1058,8 @@
                     });
 
                     recognition.onerror = (event) => {
+                        voiceSearchBtn.classList.remove('listening');
+                        activeSearchInput.placeholder = originalPlaceholder;
                         console.error("Speech recognition error:", event.error);
                     }
                 } else if (voiceSearchBtn) {
