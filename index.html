@@ -941,7 +941,7 @@
                 if (searchOverlay.classList.contains('active')) return;
                 history.pushState({ searchOpen: true }, '', '#search');
                 searchOverlay.classList.add('active');
-                setTimeout(() => activeSearchInput.focus(), 400); 
+                setTimeout(() => activeSearchInput.focus({ preventScroll: true }), 400); 
             }
 
             function closeSearch() {
@@ -1039,32 +1039,51 @@
                     const recognition = new SpeechRecognition();
                     recognition.lang = 'en-US';
                     const originalPlaceholder = activeSearchInput.placeholder;
+                    let isListening = false;
+                    let micTimeout;
 
                     recognition.onstart = () => {
+                        isListening = true;
                         voiceSearchBtn.classList.add('listening');
                         activeSearchInput.placeholder = 'Listening... 🎤';
+                        micTimeout = setTimeout(() => {
+                            if (isListening) {
+                                recognition.stop();
+                            }
+                        }, 5000);
                     };
 
                     recognition.onend = () => {
+                        clearTimeout(micTimeout);
+                        isListening = false;
                         voiceSearchBtn.classList.remove('listening');
                         activeSearchInput.placeholder = originalPlaceholder;
                     };
 
                     recognition.onresult = (event) => {
+                        clearTimeout(micTimeout);
+                        isListening = false;
+
                         const transcript = event.results[0][0].transcript;
                         activeSearchInput.value = transcript;
                         activeSearchInput.dispatchEvent(new Event('input'));
                     };
 
                     voiceSearchBtn.addEventListener('click', () => {
-                        try {
-                            recognition.start();
-                        } catch(e) {
-                            console.error("Voice recognition could not be started.", e);
+                        if (isListening) {
+                            recognition.stop();
+                        } else {
+                            try {
+                                recognition.start();
+                            } catch (e) {
+                                console.error("Voice recognition could not be started.", e);
+                            }
                         }
                     });
 
                     recognition.onerror = (event) => {
+                        clearTimeout(micTimeout);
+                        isListening = false;
                         voiceSearchBtn.classList.remove('listening');
                         activeSearchInput.placeholder = originalPlaceholder;
                         console.error("Speech recognition error:", event.error);
