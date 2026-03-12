@@ -424,6 +424,87 @@
             font-weight: bold;
         }
 
+        /* Nearest Slider */
+        #nearest-slider-container {
+            margin: 24px 0;
+        }
+        .slider-wrapper {
+            position: relative;
+        }
+        .glass-slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scroll-snap-type: x mandatory;
+            gap: 16px;
+            padding: 10px 0;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .glass-slider::-webkit-scrollbar {
+            display: none;
+        }
+        .nearest-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            scroll-snap-align: start;
+            min-width: 250px;
+            flex-shrink: 0;
+            padding: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .nearest-card:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        .nearest-card h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0 0 4px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-light);
+        }
+        .nearest-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+        .slide-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(30, 50, 100, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .slider-wrapper:hover .slide-btn {
+            opacity: 1;
+        }
+        .slide-btn.left {
+            left: -10px;
+        }
+        .slide-btn.right {
+            right: -10px;
+        }
+
     </style>
 </head>
 <body>
@@ -467,6 +548,16 @@
                 </div>
             </div>
         </div>
+
+        <div id="nearest-slider-container" style="display: none; opacity: 0; transition: opacity 0.5s ease; margin-bottom: 24px;">
+            <h3 style="color: #ffffff; font-size: 18px; font-weight: 600; margin: 0 16px 12px 16px; letter-spacing: 0.5px;">🐾 Nearest to You</h3>
+            <div class="slider-wrapper">
+                <button class="slide-btn left">&#10094;</button>
+                <div id="nearest-slider" class="glass-slider"></div>
+                <button class="slide-btn right">&#10095;</button>
+            </div>
+        </div>
+
         <h3 style="color: #ffffff; font-size: 18px; font-weight: 600; margin: 24px 16px 12px 16px; letter-spacing: 0.5px;">🐾 Top Rated Clinics Near You</h3>
         <main class="feed-container" id="feed-view"></main>
     </div>
@@ -736,6 +827,23 @@
             document.getElementById('status-text').innerText = "Location Detected. Updating list...";
             await loadRealData(position.coords);
 
+            const nearestSliderContainer = document.getElementById('nearest-slider-container');
+            const nearestSlider = document.getElementById('nearest-slider');
+            if (storesData.length > 0 && nearestSlider) {
+                const nearestStores = storesData.slice(0, 4);
+                nearestSlider.innerHTML = nearestStores.map(store => `
+                    <div class="nearest-card" onclick="openDetails('${store.id}')">
+                        <h4>${store.name}</h4>
+                        <p>${store.distance} km away</p>
+                    </div>
+                `).join('');
+
+                nearestSliderContainer.style.display = 'block';
+                setTimeout(() => {
+                    nearestSliderContainer.style.opacity = '1';
+                }, 10);
+            }
+
             try {
                 const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
                 const geoData = await geoResponse.json();
@@ -938,6 +1046,19 @@
             const searchResultsContainer = document.getElementById('search-results');
             const voiceSearchBtn = document.getElementById('voice-search-btn');
             const navSearchBtn = document.getElementById('nav-search-btn');
+
+            const nearestSlider = document.getElementById('nearest-slider');
+            if (nearestSlider) {
+                const sliderWrapper = nearestSlider.parentElement;
+                const leftBtn = sliderWrapper.querySelector('.slide-btn.left');
+                const rightBtn = sliderWrapper.querySelector('.slide-btn.right');
+                leftBtn.addEventListener('click', () => {
+                    nearestSlider.scrollBy({ left: -266, behavior: 'smooth' });
+                });
+                rightBtn.addEventListener('click', () => {
+                    nearestSlider.scrollBy({ left: 266, behavior: 'smooth' });
+                });
+            }
 
             function openSearch() {
                 if (searchOverlay.classList.contains('active')) return;
