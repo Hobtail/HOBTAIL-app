@@ -751,9 +751,7 @@
         }
 
        function csvToJson(csv) {
-            const lines = csv.split(/
-?
-/);
+            const lines = csv.split(/\r?\n/);
             const result = [];
             const headers = lines[0].split(",").map(h => h.trim());
 
