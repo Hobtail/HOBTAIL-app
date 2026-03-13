@@ -998,7 +998,7 @@
                             <div style="font-size: 12px; margin: 4px 0;">⭐ 4.8 (120+ Reviews)</div>
                             <p><span class="theme-highlight">${store.distance} km away</span></p>
                         </div>
-                        <button class="slider-view-btn" onclick="event.stopPropagation(); openAuthModal();">View Details</button>
+                        <button class="slider-view-btn">View Details</button>
                     </div>
                 `).join('');
 
@@ -1099,7 +1099,7 @@
                     </p>
                     <h3>About Clinic</h3>
                     <p class="about-text" style="line-height: 1.6; color: var(--text-light); font-size: 0.95rem; margin-bottom: 30px;">${store.about || 'Premium care for your beloved pets.'}</p>
-                    <button class="book-btn" onclick="alert('Booking feature coming soon!')">Book Appointment</button>
+                    <button class="book-btn" onclick="openAuthModal()">Book Appointment</button>
                 </div>
             `;
 
@@ -1144,6 +1144,7 @@
             const modal = document.getElementById('auth-modal');
             if (modal) {
                 modal.style.display = 'flex';
+                history.pushState({ authModalOpen: true }, '', '#login');
                 document.body.style.overflow = 'hidden';
                 setTimeout(() => {
                     modal.style.opacity = '1';
@@ -1151,7 +1152,7 @@
             }
         }
 
-        function closeAuthModal() {
+        function closeAuthModal(fromPopState = false) {
             const modal = document.getElementById('auth-modal');
             if (modal) {
                 modal.style.opacity = '0';
@@ -1159,6 +1160,9 @@
                 setTimeout(() => {
                     modal.style.display = 'none';
                 }, 300);
+                if (!fromPopState) {
+                    history.back();
+                }
             }
         }
 
@@ -1241,10 +1245,10 @@
             const formLogin = document.getElementById('form-login');
 
             if (authModal) {
-                closeAuthBtn.addEventListener('click', closeAuthModal);
+                closeAuthBtn.addEventListener('click', () => closeAuthModal(false));
                 authModal.addEventListener('click', (event) => {
                     if (event.target === authModal) {
-                        closeAuthModal();
+                        closeAuthModal(false);
                     }
                 });
                 tabSignup.addEventListener('click', () => {
@@ -1295,6 +1299,13 @@
                 } else if (document.getElementById('bottom-sheet').classList.contains('active')) {
                     closeDetails();
                 }
+            });
+
+            window.addEventListener('popstate', function(event) { 
+                const authModal = document.getElementById('auth-modal'); 
+                if (authModal && authModal.style.display === 'flex') { 
+                    closeAuthModal(true); 
+                } 
             });
 
             if (mainSearchBarContainer && searchOverlay && activeSearchInput && backButton && trendingSearches && searchResultsContainer) {
