@@ -424,6 +424,11 @@
             font-weight: bold;
         }
 
+        .theme-highlight {
+            color: #ff9800;
+            font-weight: bold;
+        }
+
         /* Nearest Slider */
         #nearest-slider-container {
             margin: 24px 0;
@@ -453,9 +458,15 @@
             scroll-snap-align: start;
             min-width: 250px;
             flex-shrink: 0;
-            padding: 15px;
             cursor: pointer;
             transition: background-color 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 12px;
+            overflow: hidden;
+            justify-content: space-between;
         }
         .nearest-card:hover {
             background: rgba(255,255,255,0.15);
@@ -463,16 +474,27 @@
         .nearest-card h4 {
             font-size: 1rem;
             font-weight: 600;
-            margin: 0 0 4px 0;
+            margin: 8px 8px 4px 8px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             color: var(--text-light);
+            width: 100%;
         }
         .nearest-card p {
             font-size: 0.85rem;
             color: var(--text-muted);
-            margin: 0;
+            margin: 0 8px;
+        }
+        .slider-view-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 12px;
+            font-weight: bold;
+            margin-top: 8px;
+            cursor: pointer;
         }
         .slide-btn {
             position: absolute;
@@ -729,7 +751,9 @@
         }
 
        function csvToJson(csv) {
-            const lines = csv.split(/\r?\n/);
+            const lines = csv.split(/
+?
+/);
             const result = [];
             const headers = lines[0].split(",").map(h => h.trim());
 
@@ -833,8 +857,13 @@
                 const nearestStores = storesData.slice(0, 4);
                 nearestSlider.innerHTML = nearestStores.map(store => `
                     <div class="nearest-card" onclick="openDetails('${store.id}')">
-                        <h4>${store.name}</h4>
-                        <p>${store.distance} km away</p>
+                        <img src="${store.cover || ''}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 12px 12px 0 0;" onerror="this.style.display='none'">
+                        <div style="padding: 0 8px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+                            <h4><span class="theme-highlight">${store.name}</span></h4>
+                            <div style="font-size: 12px; margin: 4px 0;">⭐ 4.8 (120+ Reviews)</div>
+                            <p><span class="theme-highlight">${store.distance} km away</span></p>
+                        </div>
+                        <button class="slider-view-btn">View Details</button>
                     </div>
                 `).join('');
 
