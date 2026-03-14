@@ -1154,13 +1154,19 @@
 
         function closeAuthModal(fromPopState = false) {
             const modal = document.getElementById('auth-modal');
-            if (modal) {
+            if (modal && modal.style.display === 'flex') {
                 modal.style.opacity = '0';
-                document.body.style.overflow = '';
+                
+                const sheet = document.getElementById('bottom-sheet');
+                if (!sheet.classList.contains('active')) {
+                    document.body.style.overflow = '';
+                }
+
                 setTimeout(() => {
                     modal.style.display = 'none';
                 }, 300);
-                if (!fromPopState) {
+
+                if (!fromPopState && history.state && history.state.authModalOpen) {
                     history.back();
                 }
             }
@@ -1245,9 +1251,15 @@
             const formLogin = document.getElementById('form-login');
 
             if (authModal) {
-                closeAuthBtn.addEventListener('click', () => closeAuthModal(false));
+                closeAuthBtn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    closeAuthModal(false);
+                });
                 authModal.addEventListener('click', (event) => {
                     if (event.target === authModal) {
+                        event.preventDefault();
+                        event.stopPropagation();
                         closeAuthModal(false);
                     }
                 });
@@ -1293,6 +1305,16 @@
                 activeSearchInput.dispatchEvent(new Event('input'));
             }
 
+            // HIGHEST PRIORITY: Handles auth modal closing
+            window.addEventListener('popstate', function(event) { 
+                const authModal = document.getElementById('auth-modal'); 
+                if (authModal && authModal.style.display === 'flex') { 
+                    event.stopImmediatePropagation();
+                    closeAuthModal(true); 
+                } 
+            }, true); // Use Capture phase to ensure this runs first
+
+            // Low priority: Handles other view changes
             window.addEventListener('popstate', (event) => {
                 if (searchOverlay.classList.contains('active')) {
                     closeSearch();
@@ -1301,12 +1323,6 @@
                 }
             });
 
-            window.addEventListener('popstate', function(event) { 
-                const authModal = document.getElementById('auth-modal'); 
-                if (authModal && authModal.style.display === 'flex') { 
-                    closeAuthModal(true); 
-                } 
-            });
 
             if (mainSearchBarContainer && searchOverlay && activeSearchInput && backButton && trendingSearches && searchResultsContainer) {
                 mainSearchBarContainer.addEventListener('click', openSearch);
