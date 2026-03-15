@@ -798,9 +798,7 @@
                 const distanceTag = store.distance && store.distance !== "Calculating..."
                     ? `<span class="distance-tag">${store.distance} km away</span>`
                     : '';
-                const ratingTag = store.Rating && store.Reviews
-                    ? `<div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 10px;">⭐ ${store.Rating} (${store.Reviews} Reviews)</div>`
-                    : '';
+                const ratingAndReviews = `<div class="rating" style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 10px;">⭐ ${store.rating || '4.5'} <span class="reviews">(${store.reviews || 'New'})</span></div>`;
 
                 feedView.innerHTML += `
                     <article class="store-card" data-store-id="${store.id}" onclick="openDetails('${store.id}')">
@@ -808,7 +806,7 @@
                         <div class="card-content">
                             <h3 class="store-title">${store.name}</h3>
                             ${distanceTag}
-                            ${ratingTag}
+                            ${ratingAndReviews}
                             <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px; display: flex; align-items: flex-start; gap: 6px;">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="flex-shrink: 0; margin-top: 2px;">
                                   <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
@@ -953,6 +951,8 @@
                 sliderHtml += `<div class="slider-item"><img src="${img}" alt="${store.name}"></div>`;
             });
 
+            const ratingAndReviews = `<div class="rating" style="color: var(--text-light); font-size: 1rem; margin-bottom: 15px;">⭐ ${store.rating || '4.5'} <span class="reviews">(${store.reviews || 'New'})</span></div>`;
+
             detailContent.innerHTML = `
                 <div class="multimedia-slider-container">
                     <button class="nav-btn prev-btn" id="goPrev">&#10094;</button>
@@ -961,6 +961,7 @@
                 </div>
                 <div style="padding: 15px;">
                     <h1 style="font-size: 1.8rem; margin: 0; margin-bottom: 5px;">${store.name}</h1>
+                    ${ratingAndReviews}
                     <p style="color: var(--text-muted); margin-bottom: 15px; display: flex; align-items: flex-start; gap: 6px;">
                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="flex-shrink: 0; margin-top: 2px;">
                           <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
