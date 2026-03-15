@@ -1474,7 +1474,6 @@
         });
     </script>
 <script type="module">
-  // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
@@ -1494,31 +1493,29 @@
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
 
-  const googleLoginBtn = document.getElementById('google-login-btn');
+  // 1. Handle the return from Google Login
+  getRedirectResult(auth).then((result) => {
+    if (result && result.user) {
+      localStorage.setItem('hobtail_user_logged_in', 'true');
+      document.getElementById('auth-modal').style.display = 'none';
+      alert('Login Successful! Proceeding to Book Appointment...');
+    }
+  }).catch((error) => {
+    alert("Login Error: " + error.message);
+  });
 
-  if (googleLoginBtn) {
-      googleLoginBtn.addEventListener('click', () => {
-        alert('Redirecting to Google securely...');
-        signInWithRedirect(auth, provider);
+  // 2. Handle Button Click (NO ALERTS HERE)
+  const googleBtn = document.getElementById('google-login-btn'); // Ensure your button has this ID
+  if(googleBtn) {
+    googleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      googleBtn.innerHTML = "Loading..."; // Visual feedback instead of alert
+      signInWithRedirect(auth, provider).catch((error) => {
+        alert("Redirect failed: " + error.message);
+        googleBtn.innerHTML = "Continue with Google";
       });
-  }
-
-  getRedirectResult(auth)
-    .then((result) => {
-      if (result) {
-        console.log('Successfully signed in with Google', result.user);
-        
-        localStorage.setItem('hobtail_user_logged_in', 'true');
-        document.getElementById('auth-modal').style.opacity = '0';
-        setTimeout(() => { document.getElementById('auth-modal').style.display = 'none'; }, 300);
-        alert('Login Successful! Proceeding to Book Appointment...');
-      }
-    }).catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error('Error during Google sign-in redirect:', errorMessage, `(${errorCode})`);
-        alert('Error during Google login: ' + errorMessage);
     });
+  }
 </script>
 </body>
 </html>
