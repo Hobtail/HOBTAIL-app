@@ -526,149 +526,9 @@
         .slide-btn.right {
             right: -10px;
         }
-
-        /* Auth Modal */
-        .glass-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.3s ease;
-        }
-        .glass-modal-box {
-            background: rgba(26, 48, 99, 0.8);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 20px;
-            color: white;
-            padding: 25px 35px;
-            width: 90%;
-            max-width: 400px;
-            position: relative;
-            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
-        }
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            opacity: 0.7;
-        }
-        .close-btn:hover { opacity: 1; }
-        .auth-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-        }
-        .auth-tab {
-            flex: 1;
-            padding: 10px;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-        }
-        .auth-tab.active {
-            color: var(--accent-orange-dark);
-            border-bottom-color: var(--accent-orange-dark);
-        }
-        .glass-modal-box form { display: flex; flex-direction: column; gap: 15px; }
-        .glass-modal-box input {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 8px;
-            padding: 12px;
-            color: white;
-            font-size: 15px;
-        }
-        .glass-modal-box input::placeholder { color: var(--text-muted); }
-        .auth-action-btn {
-            background: var(--accent-orange-dark);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 5px;
-            font-size: 16px;
-        }
-        .auth-divider {
-            text-align: center;
-            margin: 20px 0;
-            color: var(--text-muted);
-            position: relative;
-        }
-        .auth-divider::before, .auth-divider::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 40%;
-            height: 1px;
-            background: rgba(255,255,255,0.2);
-        }
-        .auth-divider::before { left: 0; }
-        .auth-divider::after { right: 0; }
-        .google-btn {
-            background: #4285F4;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
     </style>
 </head>
 <body>
-    <div id="auth-modal" class="glass-modal-overlay" style="display: none; opacity: 0;">
-        <div class="glass-modal-box">
-            <button id="close-auth" class="close-btn">&times;</button>
-            <div id="main-auth-section">
-                <div class="auth-tabs">
-                    <button id="tab-signup" class="auth-tab active">Sign Up</button>
-                    <button id="tab-login" class="auth-tab">Log In</button>
-                </div>
-                <form id="form-signup">
-                    <input type="text" placeholder="Name" required>
-                    <input type="email" placeholder="Phone or Email" required>
-                    <input type="password" placeholder="Password" required>
-                    <button type="submit" class="auth-action-btn">Create Account</button>
-                </form>
-                <form id="form-login" style="display: none;">
-                    <input type="email" placeholder="Phone or Email" required>
-                    <input type="password" placeholder="Password" required>
-                    <button type="submit" class="auth-action-btn">Log In</button>
-                </form>
-                <div class="auth-divider">or</div>
-                <button id="google-login-btn" class="google-btn">
-                    <svg viewBox="0 0 24 24" width="20" height="20" style="margin-right: 10px;"><g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)"><path fill="#4285F4" d="M -3.264 51.509 C -3.264 50.719 -3.334 49.969 -3.454 49.239 L -14.754 49.239 L -14.754 53.759 L -8.284 53.759 C -8.574 55.229 -9.424 56.479 -10.684 57.329 L -10.684 60.329 L -7.024 60.329 C -4.684 58.159 -3.264 55.159 -3.264 51.509 Z"></path><path fill="#34A853" d="M -14.754 63.239 C -11.514 63.239 -8.804 62.159 -7.024 60.329 L -10.684 57.329 C -11.764 58.049 -13.134 58.489 -14.754 58.489 C -17.884 58.489 -20.534 56.379 -21.484 53.529 L -25.324 53.529 L -25.324 56.629 C -23.514 60.509 -19.464 63.239 -14.754 63.239 Z"></path><path fill="#FBBC05" d="M -21.484 53.529 C -21.724 52.809 -21.854 52.029 -21.854 51.239 C -21.854 50.449 -21.724 49.669 -21.484 48.949 L -21.484 45.859 L -25.324 45.859 C -26.284 47.679 -26.754 49.629 -26.754 51.239 C -26.754 52.849 -26.284 54.799 -25.324 56.629 L -21.484 53.529 Z"></path><path fill="#EA4335" d="M -14.754 43.989 C -12.984 43.989 -11.404 44.599 -10.154 45.789 L -6.734 42.489 C -8.804 40.629 -11.514 39.239 -14.754 39.239 C -19.464 39.239 -23.514 41.969 -25.324 45.859 L -21.484 48.949 C -20.534 46.099 -17.884 43.989 -14.754 43.989 Z"></path></g></svg>
-                    Continue with Google
-                </button>
-            </div>
-        </div>
-    </div>
-
     <header class="app-header" id="main-header">
         <div class="brand-block">
             <img src="logo.jpg" alt="Logo" class="app-logo">
@@ -1143,11 +1003,7 @@
         }, false);
 
         function handleBookingClick() {
-            if (localStorage.getItem('hobtail_user_logged_in') === 'true') {
-                alert('Already verified! Proceeding to Booking Form...');
-            } else {
-                openAuthModal();
-            }
+            alert('This feature is coming soon!');
         }
 
         function openAuthModal() {
@@ -1252,43 +1108,6 @@
             const searchResultsContainer = document.getElementById('search-results');
             const voiceSearchBtn = document.getElementById('voice-search-btn');
             const navSearchBtn = document.getElementById('nav-search-btn');
-
-            const authModal = document.getElementById('auth-modal');
-            const closeAuthBtn = document.getElementById('close-auth');
-            const tabSignup = document.getElementById('tab-signup');
-            const tabLogin = document.getElementById('tab-login');
-            const formSignup = document.getElementById('form-signup');
-            const formLogin = document.getElementById('form-login');
-
-            if (authModal) {
-                closeAuthBtn.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    closeAuthModal(false);
-                });
-                authModal.addEventListener('click', (event) => {
-                    if (event.target === authModal) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        closeAuthModal(false);
-                    }
-                });
-                tabSignup.addEventListener('click', () => {
-                    tabSignup.classList.add('active');
-                    tabLogin.classList.remove('active');
-                    formSignup.style.display = 'flex';
-                    formLogin.style.display = 'none';
-                });
-                tabLogin.addEventListener('click', () => {
-                    tabLogin.classList.add('active');
-                    tabSignup.classList.remove('active');
-                    formLogin.style.display = 'flex';
-                    formSignup.style.display = 'none';
-                });
-
-                formSignup.addEventListener('submit', (e) => e.preventDefault() );
-                formLogin.addEventListener('submit', (e) => e.preventDefault() );
-            }
 
             const nearestSlider = document.getElementById('nearest-slider');
             if (nearestSlider) {
@@ -1473,45 +1292,5 @@
             }
         });
     </script>
-    <script type="module">
-          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-            import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-
-              const firebaseConfig = {
-                  apiKey: "AIzaSyBPJu9MTRFCfczs8RE4Q_nWlmVqFJ5K3Pg",
-                      authDomain: "hobtail-7ea5c.firebaseapp.com",
-                          projectId: "hobtail-7ea5c",
-                              storageBucket: "hobtail-7ea5c.firebasestorage.app",
-                                  messagingSenderId: "240324964467",
-                                      appId: "1:240324964467:web:a8370b50b8fbbe1de4ba06",
-                                          measurementId: "G-TV4ZCT5C7L"
-                                            };
-
-                                              const app = initializeApp(firebaseConfig);
-                                                const auth = getAuth(app);
-                                                  const provider = new GoogleAuthProvider();
-
-                                                    getRedirectResult(auth).then((result) => {
-                                                        if (result && result.user) {
-                                                              localStorage.setItem('hobtail_user_logged_in', 'true');
-                                                                    document.getElementById('auth-modal').style.display = 'none';
-                                                                          alert('Login Successful! Proceeding to Book Appointment...');
-                                                                              }
-                                                                                }).catch((error) => {
-                                                                                    alert("Login Error: " + error.message);
-                                                                                      });
-
-                                                                                        const googleBtn = document.getElementById('google-login-btn');
-                                                                                          if(googleBtn) {
-                                                                                              googleBtn.addEventListener('click', (e) => {
-                                                                                                    e.preventDefault();
-                                                                                                          googleBtn.innerHTML = "Loading..."; 
-                                                                                                                signInWithRedirect(auth, provider).catch((error) => {
-                                                                                                                        alert("Redirect failed: " + error.message);
-                                                                                                                                googleBtn.innerHTML = "Continue with Google";
-                                                                                                                                      });
-                                                                                                                                          });
-                                                                                                                                            }
-                                                                                                                                            </script>
-                                                                                                                                            </body>
-                                                                                                                                            </html>
+</body>
+</html>
