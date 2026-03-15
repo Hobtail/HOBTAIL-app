@@ -176,25 +176,116 @@
             gap: 25px; max-width: 1200px; margin: 0 auto;
         }
 
+        /* --- Premium Clinic Card Styles --- */
         .store-card {
-            background-color: var(--card-bg); border-radius: 16px; overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05); transition: transform 0.3s ease;
+            background-color: #1A3063;
+            border-radius: 24px; /* Apple-style rounded corners */
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25); /* Softer, deeper shadow */
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
-        .store-card:hover { transform: translateY(-5px); border-color: rgba(255, 94, 0, 0.5); }
-        .card-image { width: 100%; height: 180px; object-fit: cover; background: #2a3f7a; }
-        .card-content { padding: 20px; }
-        .store-title { font-size: 1.2rem; margin-bottom: 5px; }
+
+        .store-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 94, 0, 0.6); 
+        }
+
+        .card-image { 
+            width: 100%; 
+            height: 180px; 
+            object-fit: cover; 
+            background: #2a3f7a;
+            flex-shrink: 0;
+        }
+
+        .card-content { 
+            padding: 20px; 
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1; /* Allows the button to be pushed to the bottom */
+        }
+
+        .store-title { 
+            font-size: 1.6rem; /* Larger and more prominent */
+            font-weight: 800; /* Extra-bold */
+            color: var(--text-light); /* Kept white */
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        
+        .store-address {
+            font-size: 0.85rem; /* Smaller */
+            color: #b3b3b3; /* Lighter gray */
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .store-address svg {
+            color: #b3b3b3; /* Match text color */
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
         .distance-tag {
-            display: inline-block; background-color: rgba(255, 94, 0, 0.1);
-            color: var(--accent-orange); padding: 4px 10px; border-radius: 6px;
-            font-size: 0.85rem; font-weight: 600; margin-bottom: 15px;
+            display: inline-block; 
+            background-color: rgba(255, 94, 0, 0.15);
+            color: var(--accent-orange); /* Vibrant orange */
+            padding: 5px 12px; 
+            border-radius: 8px;
+            font-size: 0.9rem; 
+            font-weight: 700; /* Bolder */
+            margin-bottom: 15px;
+            align-self: flex-start;
         }
+
+        .rating-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .rating-info .star {
+            font-size: 1.1rem;
+            color: #FFC700; /* Golden star */
+            line-height: 1;
+        }
+
+        .rating-info .rating-number {
+            font-size: 1rem;
+            font-weight: 700; /* Bold white rating */
+            color: var(--text-light);
+        }
+
+        .rating-info .reviews {
+            font-size: 0.85rem;
+            color: #b3b3b3; /* Light gray reviews count */
+        }
+        
         .view-btn {
-            width: 100%; background-color: transparent; color: var(--text-light);
-            border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px;
-            border-radius: 10px; font-weight: bold; cursor: pointer; transition: all 0.3s ease;
+            width: 100%; 
+            background-color: var(--accent-orange); /* Brand orange background */
+            color: var(--text-light); /* Bold white text */
+            border: none; /* Remove border */
+            padding: 14px;
+            border-radius: 12px; 
+            font-weight: bold; 
+            font-size: 1rem;
+            cursor: pointer; 
+            transition: all 0.3s ease;
+            margin-top: auto; /* Pushes button to the very bottom */
         }
-        .view-btn:hover { background-color: var(--accent-orange); border-color: var(--accent-orange); }
+
+        .view-btn:hover { 
+            background-color: var(--accent-orange-dark); /* Darker on hover */
+            transform: scale(1.03);
+        }
 
         /* Bottom Sheet */
         .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1999; opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(3px); }
@@ -648,8 +739,7 @@
 			const icon = document.getElementById('header-gps-icon');
 			if (locationBar && icon) {
 				const iconRect = icon.getBoundingClientRect();
-				const originX = iconRect.left + iconRect.width / 2;
-				locationBar.style.transformOrigin = `${originX}px 0px`;
+				locationBar.style.transformOrigin = `${iconRect.left + iconRect.width / 2}px 0px`;
 			}
 			locationBar.classList.remove('hidden');
             document.getElementById('nearest-slider-container').style.display = 'none';
@@ -798,21 +888,28 @@
                 const distanceTag = store.distance && store.distance !== "Calculating..."
                     ? `<span class="distance-tag">${store.distance} km away</span>`
                     : '';
-                const ratingAndReviews = `<div class="rating" style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 10px;">⭐ ${store.rating || '4.5'} <span class="reviews">(${store.reviews || 'New'})</span></div>`;
+                
+                const ratingAndReviews = `
+                    <div class="rating-info">
+                        <span class="star">⭐</span>
+                        <span class="rating-number">${store.rating || '4.8'}</span>
+                        <span class="reviews">(${store.reviews || '150+ Reviews'})</span>
+                    </div>
+                `;
 
                 feedView.innerHTML += `
                     <article class="store-card" data-store-id="${store.id}" onclick="openDetails('${store.id}')">
                         <img src="${store.cover || ''}" alt="${store.name}" class="card-image" onerror="this.style.background='#2a3f7a'">
                         <div class="card-content">
                             <h3 class="store-title">${store.name}</h3>
-                            ${distanceTag}
                             ${ratingAndReviews}
-                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px; display: flex; align-items: flex-start; gap: 6px;">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="flex-shrink: 0; margin-top: 2px;">
+                            <p class="store-address">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
                                   <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                                 </svg>
                                 <span>${store.address}</span>
                             </p>
+                            ${distanceTag}
                             <button class="view-btn">View Details</button>
                         </div>
                     </article>
