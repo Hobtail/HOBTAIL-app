@@ -750,9 +750,7 @@
         }
 
        function csvToJson(csv) {
-            const lines = csv.split(/
-?
-/);
+            const lines = csv.split(/\r?\n/);
             const result = [];
             const headers = lines[0].split(",").map(h => h.trim());
 
@@ -1293,42 +1291,45 @@
                 }
             }
         });
-const bottomSheet = document.getElementById('bottom-sheet');
-const sheetOverlay = document.getElementById('sheet-overlay');
 
-let touchStartY = 0;
+        const bottomSheet = document.getElementById('bottom-sheet');
+        const sheetOverlay = document.getElementById('sheet-overlay');
 
-bottomSheet.addEventListener('touchstart', (e) => {
-    touchStartY = e.touches[0].clientY;
-    bottomSheet.style.transition = 'none';
-});
+        if (bottomSheet) {
+            let touchStartY = 0;
 
-bottomSheet.addEventListener('touchmove', (e) => {
-    const touchCurrentY = e.touches[0].clientY;
-    const deltaY = touchCurrentY - touchStartY;
-    if (deltaY > 0) {
-        bottomSheet.style.transform = `translateY(${deltaY}px)`;
-    }
-});
+            bottomSheet.addEventListener('touchstart', (e) => {
+                touchStartY = e.touches[0].clientY;
+                bottomSheet.style.transition = 'none';
+            });
 
-bottomSheet.addEventListener('touchend', (e) => {
-    const touchEndY = e.changedTouches[0].clientY;
-    const deltaY = touchEndY - touchStartY;
-    bottomSheet.style.transition = 'transform 0.3s ease';
+            bottomSheet.addEventListener('touchmove', (e) => {
+                const touchCurrentY = e.touches[0].clientY;
+                const deltaY = touchCurrentY - touchStartY;
+                if (deltaY > 0) {
+                    bottomSheet.style.transform = `translateY(${deltaY}px)`;
+                }
+            });
 
-    if (deltaY > 150) {
-        bottomSheet.classList.remove('active');
-        if (sheetOverlay) {
-            sheetOverlay.classList.remove('active');
+            bottomSheet.addEventListener('touchend', (e) => {
+                const touchEndY = e.changedTouches[0].clientY;
+                const deltaY = touchEndY - touchStartY;
+                bottomSheet.style.transition = 'transform 0.3s ease';
+
+                if (deltaY > 150) {
+                    bottomSheet.classList.remove('active');
+                    if (sheetOverlay) {
+                        sheetOverlay.classList.remove('active');
+                    }
+                    document.body.style.overflow = '';
+                    setTimeout(() => {
+                        bottomSheet.style.transform = '';
+                    }, 300);
+                } else {
+                    bottomSheet.style.transform = 'translateY(0)';
+                }
+            });
         }
-        document.body.style.overflow = '';
-        setTimeout(() => {
-            bottomSheet.style.transform = '';
-        }, 300);
-    } else {
-        bottomSheet.style.transform = 'translateY(0)';
-    }
-});
     </script>
 </body>
 </html>
