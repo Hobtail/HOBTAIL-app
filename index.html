@@ -750,7 +750,9 @@
         }
 
        function csvToJson(csv) {
-            const lines = csv.split(/\r?\n/);
+            const lines = csv.split(/
+?
+/);
             const result = [];
             const headers = lines[0].split(",").map(h => h.trim());
 
@@ -1319,6 +1321,7 @@ bottomSheet.addEventListener('touchend', (e) => {
         if (sheetOverlay) {
             sheetOverlay.classList.remove('active');
         }
+        document.body.style.overflow = '';
         setTimeout(() => {
             bottomSheet.style.transform = '';
         }, 300);
