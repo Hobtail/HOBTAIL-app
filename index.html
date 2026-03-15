@@ -798,6 +798,9 @@
                 const distanceTag = store.distance && store.distance !== "Calculating..."
                     ? `<span class="distance-tag">${store.distance} km away</span>`
                     : '';
+                const ratingTag = store.Rating && store.Reviews
+                    ? `<div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 10px;">⭐ ${store.Rating} (${store.Reviews} Reviews)</div>`
+                    : '';
 
                 feedView.innerHTML += `
                     <article class="store-card" data-store-id="${store.id}" onclick="openDetails('${store.id}')">
@@ -805,7 +808,8 @@
                         <div class="card-content">
                             <h3 class="store-title">${store.name}</h3>
                             ${distanceTag}
-                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 6px;">
+                            ${ratingTag}
+                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px; display: flex; align-items: flex-start; gap: 6px;">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="flex-shrink: 0; margin-top: 2px;">
                                   <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                                 </svg>
@@ -852,17 +856,21 @@
             const nearestSlider = document.getElementById('nearest-slider');
             if (storesData.length > 0 && nearestSlider) {
                 const nearestStores = storesData.slice(0, 4);
-                nearestSlider.innerHTML = nearestStores.map(store => `
+                nearestSlider.innerHTML = nearestStores.map(store => {
+                    const ratingTag = store.Rating && store.Reviews
+                        ? `<div style="font-size: 12px; margin: 4px 0;">⭐ ${store.Rating} (${store.Reviews} Reviews)</div>`
+                        : '';
+                    return `
                     <div class="nearest-card" onclick="openDetails('${store.id}')">
                         <img src="${store.cover || ''}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 12px 12px 0 0;" onerror="this.style.display='none'">
                         <div style="padding: 0 8px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
                             <h4><span class="theme-highlight">${store.name}</span></h4>
-                            <div style="font-size: 12px; margin: 4px 0;">⭐ 4.8 (120+ Reviews)</div>
+                            ${ratingTag}
                             <p><span class="theme-highlight">${store.distance} km away</span></p>
                         </div>
                         <button class="slider-view-btn">View Details</button>
                     </div>
-                `).join('');
+                `}).join('');
 
                 nearestSliderContainer.style.display = 'block';
                 setTimeout(() => {
