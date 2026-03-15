@@ -1473,49 +1473,45 @@
             }
         });
     </script>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    <script type="module">
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+            import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyBPJu9MTRFCfczs8RE4Q_nWlmVqFJ5K3Pg",
-    authDomain: "hobtail-7ea5c.firebaseapp.com",
-    projectId: "hobtail-7ea5c",
-    storageBucket: "hobtail-7ea5c.firebasestorage.app",
-    messagingSenderId: "240324964467",
-    appId: "1:240324964467:web:a8370b50b8fbbe1de4ba06",
-    measurementId: "G-TV4ZCT5C7L"
-  };
+              const firebaseConfig = {
+                  apiKey: "AIzaSyBPJu9MTRFCfczs8RE4Q_nWlmVqFJ5K3Pg",
+                      authDomain: "hobtail-7ea5c.firebaseapp.com",
+                          projectId: "hobtail-7ea5c",
+                              storageBucket: "hobtail-7ea5c.firebasestorage.app",
+                                  messagingSenderId: "240324964467",
+                                      appId: "1:240324964467:web:a8370b50b8fbbe1de4ba06",
+                                          measurementId: "G-TV4ZCT5C7L"
+                                            };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
+                                              const app = initializeApp(firebaseConfig);
+                                                const auth = getAuth(app);
+                                                  const provider = new GoogleAuthProvider();
 
-  // 1. Handle the return from Google Login
-  getRedirectResult(auth).then((result) => {
-    if (result && result.user) {
-      localStorage.setItem('hobtail_user_logged_in', 'true');
-      document.getElementById('auth-modal').style.display = 'none';
-      alert('Login Successful! Proceeding to Book Appointment...');
-    }
-  }).catch((error) => {
-    alert("Login Error: " + error.message);
-  });
+                                                    getRedirectResult(auth).then((result) => {
+                                                        if (result && result.user) {
+                                                              localStorage.setItem('hobtail_user_logged_in', 'true');
+                                                                    document.getElementById('auth-modal').style.display = 'none';
+                                                                          alert('Login Successful! Proceeding to Book Appointment...');
+                                                                              }
+                                                                                }).catch((error) => {
+                                                                                    alert("Login Error: " + error.message);
+                                                                                      });
 
-  // 2. Handle Button Click (NO ALERTS HERE)
-  const googleBtn = document.getElementById('google-login-btn'); // Ensure your button has this ID
-  if(googleBtn) {
-    googleBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      googleBtn.innerHTML = "Loading..."; // Visual feedback instead of alert
-      signInWithRedirect(auth, provider).catch((error) => {
-        alert("Redirect failed: " + error.message);
-        googleBtn.innerHTML = "Continue with Google";
-      });
-    });
-  }
-</script>
-</body>
-</html>
+                                                                                        const googleBtn = document.getElementById('google-login-btn');
+                                                                                          if(googleBtn) {
+                                                                                              googleBtn.addEventListener('click', (e) => {
+                                                                                                    e.preventDefault();
+                                                                                                          googleBtn.innerHTML = "Loading..."; 
+                                                                                                                signInWithRedirect(auth, provider).catch((error) => {
+                                                                                                                        alert("Redirect failed: " + error.message);
+                                                                                                                                googleBtn.innerHTML = "Continue with Google";
+                                                                                                                                      });
+                                                                                                                                          });
+                                                                                                                                            }
+                                                                                                                                            </script>
+                                                                                                                                            </body>
+                                                                                                                                            </html>
