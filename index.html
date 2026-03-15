@@ -661,17 +661,10 @@
                     <button type="submit" class="auth-action-btn">Log In</button>
                 </form>
                 <div class="auth-divider">or</div>
-                <button class="google-btn">
+                <button id="google-login-btn" class="google-btn">
                     <svg viewBox="0 0 24 24" width="20" height="20" style="margin-right: 10px;"><g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)"><path fill="#4285F4" d="M -3.264 51.509 C -3.264 50.719 -3.334 49.969 -3.454 49.239 L -14.754 49.239 L -14.754 53.759 L -8.284 53.759 C -8.574 55.229 -9.424 56.479 -10.684 57.329 L -10.684 60.329 L -7.024 60.329 C -4.684 58.159 -3.264 55.159 -3.264 51.509 Z"></path><path fill="#34A853" d="M -14.754 63.239 C -11.514 63.239 -8.804 62.159 -7.024 60.329 L -10.684 57.329 C -11.764 58.049 -13.134 58.489 -14.754 58.489 C -17.884 58.489 -20.534 56.379 -21.484 53.529 L -25.324 53.529 L -25.324 56.629 C -23.514 60.509 -19.464 63.239 -14.754 63.239 Z"></path><path fill="#FBBC05" d="M -21.484 53.529 C -21.724 52.809 -21.854 52.029 -21.854 51.239 C -21.854 50.449 -21.724 49.669 -21.484 48.949 L -21.484 45.859 L -25.324 45.859 C -26.284 47.679 -26.754 49.629 -26.754 51.239 C -26.754 52.849 -26.284 54.799 -25.324 56.629 L -21.484 53.529 Z"></path><path fill="#EA4335" d="M -14.754 43.989 C -12.984 43.989 -11.404 44.599 -10.154 45.789 L -6.734 42.489 C -8.804 40.629 -11.514 39.239 -14.754 39.239 C -19.464 39.239 -23.514 41.969 -25.324 45.859 L -21.484 48.949 C -20.534 46.099 -17.884 43.989 -14.754 43.989 Z"></path></g></svg>
                     Continue with Google
                 </button>
-            </div>
-            <div id="otp-section" style="display: none; text-align: center;">
-                <h3 style="margin-bottom: 15px; font-weight: 600;">Verify Your Number</h3>
-                <form>
-                    <input type="text" placeholder="Enter Phone Number or OTP" required style="margin-bottom: 15px; text-align: center;">
-                    <button id="verify-otp-btn" type="submit" class="auth-action-btn" style="width: 100%;">Verify & Continue</button>
-                </form>
             </div>
         </div>
     </div>
@@ -1150,11 +1143,9 @@
         }, false);
 
         function handleBookingClick() {
-            if (localStorage.getItem('hobtail_verified_user') === 'true') {
+            if (localStorage.getItem('hobtail_user_logged_in') === 'true') {
                 alert('Already verified! Proceeding to Booking Form...');
             } else {
-                document.getElementById('main-auth-section').style.display = 'block';
-                document.getElementById('otp-section').style.display = 'none';
                 openAuthModal();
             }
         }
@@ -1268,17 +1259,6 @@
             const tabLogin = document.getElementById('tab-login');
             const formSignup = document.getElementById('form-signup');
             const formLogin = document.getElementById('form-login');
-            const googleBtn = document.querySelector('.google-btn');
-            const mainAuthSection = document.getElementById('main-auth-section');
-            const otpSection = document.getElementById('otp-section');
-            const verifyOtpBtn = document.getElementById('verify-otp-btn');
-
-
-            function switchToOtpView(event) {
-                event.preventDefault();
-                mainAuthSection.style.display = 'none';
-                otpSection.style.display = 'block';
-            }
 
             if (authModal) {
                 closeAuthBtn.addEventListener('click', (event) => {
@@ -1306,16 +1286,8 @@
                     formSignup.style.display = 'none';
                 });
 
-                formSignup.addEventListener('submit', switchToOtpView);
-                formLogin.addEventListener('submit', switchToOtpView);
-                
-
-                verifyOtpBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    localStorage.setItem('hobtail_verified_user', 'true');
-                    closeAuthModal();
-                    alert('Verification Successful! Proceeding to Booking Form...');
-                });
+                formSignup.addEventListener('submit', (e) => e.preventDefault() );
+                formLogin.addEventListener('submit', (e) => e.preventDefault() );
             }
 
             const nearestSlider = document.getElementById('nearest-slider');
@@ -1522,7 +1494,7 @@
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
 
-  const googleLoginBtn = document.querySelector('.google-btn');
+  const googleLoginBtn = document.getElementById('google-login-btn');
 
   googleLoginBtn.addEventListener('click', () => {
     signInWithPopup(auth, provider)
@@ -1535,8 +1507,10 @@
         
         console.log('Successfully signed in with Google', user);
 
-        document.getElementById('main-auth-section').style.display = 'none';
-        document.getElementById('otp-section').style.display = 'block';
+        localStorage.setItem('hobtail_user_logged_in', 'true');
+        document.getElementById('auth-modal').style.opacity = '0';
+        setTimeout(() => { document.getElementById('auth-modal').style.display = 'none'; }, 300);
+        alert('Login Successful! Proceeding to Book Appointment...');
 
       }).catch((error) => {
         // Handle Errors here.
