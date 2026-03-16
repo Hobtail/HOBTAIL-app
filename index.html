@@ -528,7 +528,7 @@
             scroll-behavior: smooth;
             scroll-snap-type: x mandatory;
             gap: 16px;
-            padding: 10px calc(50% - 138px); /* Adjusted for card width */
+            padding: 10px calc(50% - 138px);
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
@@ -542,7 +542,7 @@
             border-radius: 20px;
             border: 1px solid rgba(255,255,255,0.2);
             scroll-snap-align: center;
-            min-width: 260px; /* Adjusted width */
+            min-width: 260px;
             flex-shrink: 0;
             cursor: pointer;
             transition: background-color 0.2s;
@@ -561,41 +561,57 @@
             text-align: center;
             flex-grow: 1;
             justify-content: center;
+            gap: 4px; /* Add gap for spacing */
         }
         .nearest-card h4 {
-            font-size: 1.1rem; /* Slightly larger */
-            font-weight: 800; /* Extra-bold */
-            margin: 0 0 4px 0; /* Margin bottom for spacing */
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin: 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: #ffffff; /* Pure White */
+            color: #ffffff;
             width: 100%;
         }
         .top-card-rating {
-            font-size: 0.9rem;
-            color: #FFC700; /* Golden star color */
-            margin-bottom: 6px; /* Space below rating */
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: white;
+            font-weight: bold;
         }
-        .nearest-card-distance {
-            font-size: 0.8rem; /* Slightly smaller */
-            color: var(--accent-orange); /* Brand Orange */
-            font-weight: 600;
-            margin: 0;
+        .top-card-address {
+            font-size: 12px;
+            color: #a0a0a0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 90%; /* Prevent overflow */
+        }
+        .top-card-distance-badge {
+            background: rgba(255, 102, 0, 0.15);
+            color: #ff6600;
+            font-weight: bold;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            margin-top: 5px;
+            display: inline-block;
         }
         .slider-view-btn {
             background: var(--accent-orange);
             color: white;
             border: none;
-            padding: 10px 16px;
-            border-radius: 0 0 20px 20px; /* Match bottom radius */
+            padding: 12px;
             font-weight: bold;
             cursor: pointer;
-            width: 100%;
             transition: background-color 0.2s;
-        }
-        .slider-view-btn:hover {
-            background-color: var(--accent-orange-dark);
+            margin: 10px;
+            width: calc(100% - 20px);
+            border-radius: 8px;
         }
         .slide-btn {
             position: absolute;
@@ -967,8 +983,15 @@
                         <img src="${store.cover || ''}" style="width: 100%; height: 120px; object-fit: cover;" onerror="this.style.display='none'">
                         <div class="card-info-top">
                             <h4>${store.name}</h4>
-                            <div class="top-card-rating">⭐ ${store.rating || '4.5'}</div>
-                            <p class="nearest-card-distance">${store.distance} km away</p>
+                            <div class="top-card-rating">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 
+                                ${store.rating || '4.5'}
+                            </div>
+                            <div class="top-card-address">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="#a0a0a0"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg> 
+                                ${store.address}
+                            </div>
+                            <div class="top-card-distance-badge">${store.distance} km away</div>
                         </div>
                         <button class="slider-view-btn">View Details</button>
                     </div>
@@ -1445,4 +1468,3 @@
         }
     </script>
 </body>
-</html>
