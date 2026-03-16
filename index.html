@@ -515,12 +515,7 @@
             font-weight: bold;
         }
 
-        .theme-highlight {
-            color: #E65500;
-            font-weight: bold;
-        }
-
-        /* Nearest Slider */
+        /* --- Nearest to You Card Styles (TOP SCROLLER) --- */
         #nearest-slider-container {
             margin: 24px 0;
         }
@@ -533,9 +528,9 @@
             scroll-behavior: smooth;
             scroll-snap-type: x mandatory;
             gap: 16px;
-            padding: 10px calc(50% - 133px);
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            padding: 10px calc(50% - 138px); /* Adjusted for card width */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
         .glass-slider::-webkit-scrollbar {
             display: none;
@@ -547,45 +542,60 @@
             border-radius: 20px;
             border: 1px solid rgba(255,255,255,0.2);
             scroll-snap-align: center;
-            min-width: 250px;
+            min-width: 260px; /* Adjusted width */
             flex-shrink: 0;
             cursor: pointer;
             transition: background-color 0.2s;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding-bottom: 12px;
             overflow: hidden;
-            justify-content: space-between;
         }
         .nearest-card:hover {
             background: rgba(255,255,255,0.15);
         }
+        .nearest-card .card-info-top {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex-grow: 1;
+            justify-content: center;
+        }
         .nearest-card h4 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin: 8px 8px 4px 8px;
+            font-size: 1.1rem; /* Slightly larger */
+            font-weight: 800; /* Extra-bold */
+            margin: 0 0 4px 0; /* Margin bottom for spacing */
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: var(--text-light);
+            color: #ffffff; /* Pure White */
             width: 100%;
         }
-        .nearest-card p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin: 0 8px;
+        .top-card-rating {
+            font-size: 0.9rem;
+            color: #FFC700; /* Golden star color */
+            margin-bottom: 6px; /* Space below rating */
+        }
+        .nearest-card-distance {
+            font-size: 0.8rem; /* Slightly smaller */
+            color: var(--accent-orange); /* Brand Orange */
+            font-weight: 600;
+            margin: 0;
         }
         .slider-view-btn {
-            background: #E65500;
+            background: var(--accent-orange);
             color: white;
             border: none;
-            padding: 6px 16px;
-            border-radius: 12px;
+            padding: 10px 16px;
+            border-radius: 0 0 20px 20px; /* Match bottom radius */
             font-weight: bold;
-            margin-top: 8px;
             cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+        .slider-view-btn:hover {
+            background-color: var(--accent-orange-dark);
         }
         .slide-btn {
             position: absolute;
@@ -950,18 +960,15 @@
             const nearestSliderContainer = document.getElementById('nearest-slider-container');
             const nearestSlider = document.getElementById('nearest-slider');
             if (storesData.length > 0 && nearestSlider) {
-                const nearestStores = storesData.slice(0, 4);
+                const nearestStores = storesData.slice(0, 5); // Fetch 5 for better scrolling
                 nearestSlider.innerHTML = nearestStores.map(store => {
-                    const ratingTag = store.Rating && store.Reviews
-                        ? `<div style="font-size: 12px; margin: 4px 0;">⭐ ${store.Rating} (${store.Reviews} Reviews)</div>`
-                        : '';
                     return `
                     <div class="nearest-card" onclick="openDetails('${store.id}')">
-                        <img src="${store.cover || ''}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 12px 12px 0 0;" onerror="this.style.display='none'">
-                        <div style="padding: 0 8px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
-                            <h4><span class="theme-highlight">${store.name}</span></h4>
-                            ${ratingTag}
-                            <p><span class="theme-highlight">${store.distance} km away</span></p>
+                        <img src="${store.cover || ''}" style="width: 100%; height: 120px; object-fit: cover;" onerror="this.style.display='none'">
+                        <div class="card-info-top">
+                            <h4>${store.name}</h4>
+                            <div class="top-card-rating">⭐ ${store.rating || '4.5'}</div>
+                            <p class="nearest-card-distance">${store.distance} km away</p>
                         </div>
                         <button class="slider-view-btn">View Details</button>
                     </div>
