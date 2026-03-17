@@ -305,6 +305,17 @@
 
     /* Multi-Media Slider */
     .multimedia-slider-container { position: relative; width: 100%; height: 260px; background: #000; border-radius: 20px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+    
+    /* --- Liquid Slider Effect --- */
+    .multimedia-slider-container.liquid-active {
+        filter: contrast(20);
+        background: var(--card-dark-lighter);
+    }
+    .multimedia-slider-container.liquid-active .image-slider {
+        filter: blur(8px);
+    }
+    /* --- End Liquid Slider Effect --- */
+
     .image-slider { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; }
     .image-slider::-webkit-scrollbar { display: none; }
     .slider-item { flex: 0 0 100%; scroll-snap-align: center; height: 100%; display: flex; align-items: center; justify-content: center; }
@@ -323,7 +334,7 @@
         bottom: 0;
         left: 0;
         width: 100%;
-        box-sizing: border-box;
+        box-sizing: box-sizing;
         margin: 0;
         z-index: 1000;
         background: rgba(21, 42, 85, 0.8);
@@ -1111,14 +1122,26 @@
             `;
 
             const slider = document.getElementById('mainSlider');
+            const sliderContainer = slider.closest('.multimedia-slider-container');
             const prevBtn = document.getElementById('goPrev');
             const nextBtn = document.getElementById('goNext');
+
             function updateArrows() {
                 if (!slider) return;
                 prevBtn.style.display = (slider.scrollLeft <= 5) ? 'none' : 'flex';
                 nextBtn.style.display = (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 5) ? 'none' : 'flex';
             }
-            slider.addEventListener('scroll', updateArrows);
+            
+            let scrollTimeout;
+            slider.addEventListener('scroll', () => {
+                sliderContainer.classList.add('liquid-active');
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    sliderContainer.classList.remove('liquid-active');
+                }, 150);
+                updateArrows();
+            });
+
             setTimeout(updateArrows, 150);
             nextBtn.onclick = () => slider.scrollBy({ left: slider.clientWidth, behavior: 'smooth' });
             prevBtn.onclick = () => slider.scrollBy({ left: -slider.clientWidth, behavior: 'smooth' });
