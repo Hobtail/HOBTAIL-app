@@ -1,0 +1,416 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - Hobtail</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Strict Theme & Base Styles --- */
+        :root {
+            --bg-dark-premium: #152A55;
+            --card-dark-lighter: #1d3566;
+            --brand-orange: #FF6600;
+            --text-white-crisp: #FFFFFF;
+            --text-gray-muted: #CCCCCC;
+            --disabled-gray: #5a6b8c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark-premium);
+            color: var(--text-white-crisp);
+            padding: 20px;
+            padding-bottom: 100px; /* Space for sticky button */
+        }
+
+        /* --- Header --- */
+        .main-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .back-arrow {
+            color: var(--text-white-crisp);
+            text-decoration: none;
+            position: absolute;
+            left: 0;
+        }
+
+        .back-arrow svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .main-header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* --- Glassmorphism Clinic Card --- */
+        .clinic-info-card {
+            background: rgba(29, 53, 102, 0.7); /* var(--card-dark-lighter) with alpha */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .clinic-info-card h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-white-crisp);
+        }
+
+        .clinic-info-card .rating {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-dark-premium);
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .clinic-info-card .rating svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--brand-orange);
+            margin-right: 5px;
+        }
+
+        .clinic-info-card .rating span {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-white-crisp);
+        }
+        
+        /* --- Core Logic: Service Type Selector --- */
+        .service-type-selector h3, .details-section h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-gray-muted);
+        }
+
+        .service-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .service-option {
+            background-color: var(--card-dark-lighter);
+            border: 2px solid var(--card-dark-lighter);
+            border-radius: 10px;
+            padding: 25px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .service-option.active {
+            border-color: var(--brand-orange);
+            background-color: #2a4a8a;
+        }
+
+        .service-option.disabled {
+            background-color: #1a2c4a;
+            border-color: #1a2c4a;
+            cursor: not-allowed;
+            color: var(--disabled-gray);
+        }
+        
+        .service-option.disabled h4 {
+            color: var(--disabled-gray);
+        }
+
+        .service-option h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .not-available-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #cc3300;
+            color: var(--text-white-crisp);
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 15px;
+            text-transform: uppercase;
+        }
+
+        /* --- Form Fields --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-gray-muted);
+            margin-bottom: 8px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="tel"] {
+            width: 100%;
+            background-color: var(--card-dark-lighter);
+            border: 1px solid #2a4a8a;
+            border-radius: 8px;
+            padding: 15px;
+            color: var(--text-white-crisp);
+            font-size: 1rem;
+        }
+        
+        .form-group input::placeholder {
+            color: #7d8da9;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--brand-orange);
+        }
+
+        /* Date Slider & Time Pills (Placeholder Styles) */
+        .date-slider, .time-slots {
+            background-color: var(--card-dark-lighter);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            color: var(--text-gray-muted);
+        }
+        .time-slots {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .time-pill {
+            background: var(--bg-dark-premium);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+         .time-pill.selected {
+            background: var(--brand-orange);
+            color: var(--text-white-crisp);
+        }
+
+
+        /* Pet Type Radio Chips */
+        .radio-chips {
+            display: flex;
+            gap: 10px;
+        }
+
+        .radio-chips input[type="radio"] {
+            display: none;
+        }
+
+        .radio-chips label {
+            background-color: var(--card-dark-lighter);
+            color: var(--text-gray-muted);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .radio-chips input[type="radio"]:checked + label {
+            background-color: #2a4a8a;
+            color: var(--text-white-crisp);
+            border-color: var(--brand-orange);
+        }
+        
+        /* --- Utility --- */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* --- Sticky Bottom Button --- */
+        .sticky-bottom-button {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--brand-orange);
+            color: var(--text-white-crisp);
+            text-align: center;
+            padding: 20px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <a href="index.html" class="back-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"/>
+            </svg>
+        </a>
+        <h1>Book Appointment</h1>
+    </header>
+
+    <main>
+        <div class="clinic-info-card">
+            <h2 id="clinic-name">Loading Clinic...</h2>
+            <div class="rating">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27z"/>
+                </svg>
+                <span id="clinic-rating">...</span>
+            </div>
+        </div>
+
+        <section class="service-type-selector">
+            <h3>Select Service Type</h3>
+            <div class="service-options">
+                <div class="service-option active" id="clinic-visit-option">
+                    <h4>Clinic Visit</h4>
+                </div>
+                <div class="service-option" id="home-visit-option">
+                    <h4>Home Visit</h4>
+                    <span class="not-available-badge hidden" id="home-visit-badge">Not Available</span>
+                </div>
+            </div>
+        </section>
+
+        <form class="booking-form">
+            <div id="common-fields">
+                 <div class="form-group">
+                    <label for="date-slider">Select Date</label>
+                    <div class="date-slider">Placeholder for Date Slider</div>
+                </div>
+                 <div class="form-group">
+                    <label for="time-slots">Available Time</label>
+                     <div class="time-slots" id="time-slots">
+                        <div class="time-pill">09:00 AM</div>
+                        <div class="time-pill selected">10:00 AM</div>
+                        <div class="time-pill">11:00 AM</div>
+                        <div class="time-pill">02:00 PM</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="home-visit-fields" class="hidden">
+                 <div class="form-group">
+                    <label for="home-address">Full Home Address</label>
+                    <input type="text" id="home-address" name="home-address" placeholder="e.g., 123 Pet Lane, Suite 100">
+                </div>
+            </div>
+
+             <section class="details-section">
+                <h3>Pet & Owner Details</h3>
+                <div class="form-group">
+                    <label>Pet Type</label>
+                    <div class="radio-chips">
+                        <input type="radio" id="pet-dog" name="pet-type" value="dog" checked>
+                        <label for="pet-dog">Dog</label>
+                        <input type="radio" id="pet-cat" name="pet-type" value="cat">
+                        <label for="pet-cat">Cat</label>
+                         <input type="radio" id="pet-other" name="pet-type" value="other">
+                        <label for="pet-other">Other</label>
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <label for="pet-name">Pet Name</label>
+                    <input type="text" id="pet-name" name="pet-name" placeholder="e.g., Bruno">
+                </div>
+                <div class="form-group">
+                    <label for="owner-name">Owner Name</label>
+                    <input type="text" id="owner-name" name="owner-name" placeholder="e.g., John Doe">
+                </div>
+                 <div class="form-group">
+                    <label for="owner-phone">Phone Number</label>
+                    <input type="tel" id="owner-phone" name="owner-phone" placeholder="e.g., +1 123 456 7890">
+                </div>
+            </section>
+        </form>
+    </main>
+
+    <button class="sticky-bottom-button">Confirm Booking</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 1. URL Parameter Logic ---
+            const params = new URLSearchParams(window.location.search);
+            const clinicName = params.get('name') || 'Premium Pet Care';
+            const homeGrooming = params.get('homeGrooming');
+            const rating = params.get('rating') || '4.9';
+
+            document.getElementById('clinic-name').textContent = clinicName;
+            document.getElementById('clinic-rating').textContent = rating;
+
+            const homeVisitOption = document.getElementById('home-visit-option');
+            const homeVisitBadge = document.getElementById('home-visit-badge');
+            const homeVisitFields = document.getElementById('home-visit-fields');
+            
+            // If homeGrooming is 'No' or not specified, disable the 'Home Visit' option
+            if (homeGrooming !== 'Yes') {
+                homeVisitOption.classList.add('disabled');
+                homeVisitBadge.classList.remove('hidden');
+            }
+
+            // --- 2. Service Type Toggle Logic ---
+            const clinicVisitOption = document.getElementById('clinic-visit-option');
+            
+            clinicVisitOption.addEventListener('click', () => {
+                if (homeVisitOption.classList.contains('disabled')) return;
+                
+                clinicVisitOption.classList.add('active');
+                homeVisitOption.classList.remove('active');
+                homeVisitFields.classList.add('hidden');
+            });
+
+            homeVisitOption.addEventListener('click', () => {
+                if (homeVisitOption.classList.contains('disabled')) return;
+                
+                homeVisitOption.classList.add('active');
+                clinicVisitOption.classList.remove('active');
+                homeVisitFields.classList.remove('hidden');
+            });
+
+            // --- 3. Placeholder logic for time pills ---
+            const timePills = document.querySelectorAll('.time-pill');
+            timePills.forEach(pill => {
+                pill.addEventListener('click', () => {
+                    timePills.forEach(p => p.classList.remove('selected')); // Deselect all
+                    pill.classList.add('selected'); // Select clicked one
+                });
+            });
+
+        });
+    </script>
+
+</body>
+</html>
