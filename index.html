@@ -1126,7 +1126,7 @@
                     </p>
                     <h3>About Clinic</h3>
                     <p class="about-text" style="line-height: 1.6; color: var(--text-white-crisp); font-size: 0.95rem; margin-bottom: 30px;">${store.about || 'Premium care for your beloved pets.'}</p>
-                    <button class="book-btn" onclick="handleBookingClick()">Book Appointment ${newPawIcon}</button>
+                    <button class="book-btn" onclick="handleBookingClick('${store.id}')">Book Appointment ${newPawIcon}</button>
                 </div>
             `;
 
@@ -1167,8 +1167,16 @@
             lastScrollTop = st <= 0 ? 0 : st; 
         }, false);
 
-        function handleBookingClick() {
-            alert('This feature is coming soon!');
+        function handleBookingClick(storeId) {
+            const store = storesData.find(s => s.id === storeId);
+            if (!store) {
+                console.error('Store not found for booking:', storeId);
+                alert('Could not find clinic details. Please try again.');
+                return;
+            }
+            const clinicName = store.name;
+            const homeGroomingStatus = store.Home_Grooming || 'Not specified';
+            window.location.href = 'book-appointment.html?clinic=' + encodeURIComponent(clinicName) + '&homeGrooming=' + encodeURIComponent(homeGroomingStatus);
         }
 
         function openAuthModal() {
