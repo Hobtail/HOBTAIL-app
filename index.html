@@ -297,7 +297,19 @@
     }
 
     /* Bottom Sheet */
-    .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1999; opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(3px); }
+    .bottom-sheet-overlay { 
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        background: rgba(0, 0, 0, 0.6); 
+        z-index: 1999; 
+        opacity: 0; 
+        visibility: hidden; 
+        transition: opacity 0.3s ease, visibility 0.3s; 
+        backdrop-filter: blur(3px); 
+    }
     .bottom-sheet { position: fixed; bottom: 0; left: 0; width: 100%; max-height: 85vh; background-color: var(--card-dark-lighter); border-radius: 24px 24px 0 0; z-index: 2000; padding: 20px 20px 40px 20px; overflow-y: auto; box-shadow: 0 -5px 25px rgba(0,0,0,0.5); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
     .bottom-sheet-overlay.active { opacity: 1; visibility: visible; }
     .bottom-sheet.active { transform: translateY(0); }
@@ -673,6 +685,124 @@
     .slide-btn.right {
         right: -10px;
     }
+
+    /* --- Booking Modal --- */
+    .bottom-sheet-modal {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: var(--bg-dark-premium);
+        border-radius: 20px 20px 0 0;
+        padding: 20px;
+        box-shadow: 0 -5px 30px rgba(0,0,0,0.4);
+        transform: translateY(100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 3000;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .bottom-sheet-modal.active {
+        transform: translateY(0);
+    }
+
+    .booking-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .booking-header h2 {
+        color: var(--text-white-crisp);
+        font-size: 1.5rem;
+    }
+
+    .close-icon {
+        cursor: pointer;
+        color: var(--text-gray-muted);
+    }
+
+    .booking-clinic-info {
+        margin-bottom: 20px;
+    }
+
+    #booking-clinic-name {
+        color: var(--text-white-crisp);
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    #booking-clinic-rating {
+        color: var(--text-gray-muted);
+    }
+
+    .service-toggle {
+        display: flex;
+        background-color: var(--card-dark-lighter);
+        border-radius: 50px;
+        padding: 5px;
+        margin-bottom: 20px;
+    }
+
+    .toggle-btn {
+        flex: 1;
+        background-color: transparent;
+        border: none;
+        color: var(--text-gray-muted);
+        padding: 10px;
+        border-radius: 50px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .toggle-btn.active {
+        background-color: var(--brand-orange);
+        color: var(--text-white-crisp);
+    }
+
+    .toggle-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .booking-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .booking-form input {
+        background-color: var(--card-dark-lighter);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-white-crisp);
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 1rem;
+    }
+
+    .confirm-booking-btn {
+        background-color: var(--brand-orange);
+        color: var(--text-white-crisp);
+        border: none;
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+        position: sticky;
+        bottom: -20px; /* Counteract padding */
+        margin-bottom: -20px; /* Counteract padding */
+    }
+
 </style>
 </head>
 <body>
@@ -770,6 +900,40 @@
         <div id="search-results">
             <!-- Micro-cards will be injected here -->
         </div>
+    </div>
+
+    <!-- Booking Bottom Sheet -->
+    <div class="bottom-sheet-overlay" id="booking-overlay"></div>
+    <div class="bottom-sheet-modal" id="booking-modal">
+        <div class="booking-header">
+            <h2>Book Appointment</h2>
+            <svg id="close-booking-modal" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="close-icon"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </div>
+        <div class="booking-clinic-info">
+            <h3 id="booking-clinic-name"></h3>
+            <p id="booking-clinic-rating"></p>
+        </div>
+        <div class="service-toggle">
+            <button class="toggle-btn active" id="clinic-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M5 21V7l7-5 7 5v14"></path><path d="M9 21v-8h6v8"></path></svg>
+                At Clinic
+            </button>
+            <button class="toggle-btn" id="home-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                At Home
+            </button>
+        </div>
+        <form class="booking-form">
+            <input type="text" placeholder="Pet Name" required>
+            <input type="text" placeholder="Owner Name" required>
+            <input type="tel" placeholder="Phone Number" required>
+            <div id="home-address-container" style="display: none;">
+                <input type="text" placeholder="Home Address">
+            </div>
+            <input type="date" required>
+            <input type="time" required>
+            <button type="submit" class="confirm-booking-btn">Confirm Booking</button>
+        </form>
     </div>
 
     <script>
@@ -1126,7 +1290,7 @@
                     </p>
                     <h3>About Clinic</h3>
                     <p class="about-text" style="line-height: 1.6; color: var(--text-white-crisp); font-size: 0.95rem; margin-bottom: 30px;">${store.about || 'Premium care for your beloved pets.'}</p>
-                    <button class="book-btn" onclick="handleBookingClick('${store.id}')">Book Appointment ${newPawIcon}</button>
+                    <button class="book-btn" onclick="openBookingModal('${store.id}')">Book Appointment ${newPawIcon}</button>
                 </div>
             `;
 
@@ -1152,7 +1316,9 @@
         function closeDetails() {
             document.getElementById('bottom-sheet').classList.remove('active');
             document.getElementById('sheet-overlay').classList.remove('active');
-            document.body.style.overflow = '';
+            if(!document.getElementById('booking-modal').classList.contains('active')) {
+                document.body.style.overflow = '';
+            }
         }
         
         let lastScrollTop = 0;
@@ -1167,16 +1333,40 @@
             lastScrollTop = st <= 0 ? 0 : st; 
         }, false);
 
-        function handleBookingClick(storeId) {
+        function openBookingModal(storeId) {
             const store = storesData.find(s => s.id === storeId);
-            if (!store) {
-                console.error('Store not found for booking:', storeId);
-                alert('Could not find clinic details. Please try again.');
-                return;
+            if (!store) return;
+
+            // First, close the details sheet if it's open
+            if(document.getElementById('bottom-sheet').classList.contains('active')) {
+                closeDetails();
             }
-            const clinicName = store.name;
-            const homeGroomingStatus = store.Home_Grooming || 'Not specified';
-            window.location.href = 'book-appointment.html?clinic=' + encodeURIComponent(clinicName) + '&homeGrooming=' + encodeURIComponent(homeGroomingStatus);
+
+            // Then, after a short delay, open the booking modal
+            setTimeout(() => {
+                document.getElementById('booking-clinic-name').textContent = store.name;
+                document.getElementById('booking-clinic-rating').textContent = `⭐ ${store.rating || '4.5'} (${store.reviews || 'New'})`;
+
+                const bookingModal = document.getElementById('booking-modal');
+                const bookingOverlay = document.getElementById('booking-overlay');
+
+                bookingModal.classList.add('active');
+                if (bookingOverlay) bookingOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }, 300); // Delay to allow details sheet to close
+        }
+
+        function closeBookingModal() {
+            const bookingModal = document.getElementById('booking-modal');
+            const bookingOverlay = document.getElementById('booking-overlay');
+
+            if (bookingModal) bookingModal.classList.remove('active');
+            if (bookingOverlay) bookingOverlay.classList.remove('active');
+
+            const detailsSheet = document.getElementById('bottom-sheet');
+            if (!detailsSheet.classList.contains('active')) {
+                 document.body.style.overflow = '';
+            }
         }
 
         function openAuthModal() {
@@ -1281,6 +1471,31 @@
             const searchResultsContainer = document.getElementById('search-results');
             const voiceSearchBtn = document.getElementById('voice-search-btn');
             const navSearchBtn = document.getElementById('nav-search-btn');
+
+            // New Booking Modal listeners
+            const closeBookingBtn = document.getElementById('close-booking-modal');
+            const bookingOverlay = document.getElementById('booking-overlay');
+            const clinicToggle = document.getElementById('clinic-toggle');
+            const homeToggle = document.getElementById('home-toggle');
+            const homeAddressContainer = document.getElementById('home-address-container');
+
+            if(closeBookingBtn) closeBookingBtn.addEventListener('click', closeBookingModal);
+            if(bookingOverlay) bookingOverlay.addEventListener('click', closeBookingModal);
+
+            if(clinicToggle) {
+                clinicToggle.addEventListener('click', () => {
+                    clinicToggle.classList.add('active');
+                    homeToggle.classList.remove('active');
+                    homeAddressContainer.style.display = 'none';
+                });
+            }
+            if(homeToggle) {
+                homeToggle.addEventListener('click', () => {
+                    homeToggle.classList.add('active');
+                    clinicToggle.classList.remove('active');
+                    homeAddressContainer.style.display = 'block';
+                });
+            }
 
             const nearestSlider = document.getElementById('nearest-slider');
             if (nearestSlider) {
