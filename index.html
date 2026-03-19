@@ -832,6 +832,27 @@
         width: 100%;
     }
 
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 999; }
+.bottom-sheet { position: fixed; bottom: -100%; left: 0; width: 100%; background-color: #152A55; border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 1000; padding: 20px; box-sizing: border-box; transition: bottom 0.4s ease-in-out; box-shadow: 0 -5px 15px rgba(0,0,0,0.3); }
+.bottom-sheet.show { bottom: 0; }
+.sheet-header { display: flex; justify-content: space-between; align-items: center; color: #FFFFFF; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+.sheet-header h2 { font-size: 1.2rem; margin: 0; display: flex; align-items: center; gap: 8px;}
+.sheet-header .rating { color: #FFD700; font-size: 1rem; display: flex; align-items: center; gap: 4px; }
+.close-btn { font-size: 1.8rem; color: #FFFFFF; cursor: pointer; }
+.slider-viewport { width: 100%; overflow: hidden; }
+.slider-track { display: flex; width: 300%; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
+.slide-panel { width: 33.333%; flex-shrink: 0; padding-right: 20px; box-sizing: border-box; }
+.step-title { color: #FFFFFF; font-size: 1.1rem; margin-bottom: 15px; }
+.custom-input { width: 100%; padding: 12px; margin-bottom: 15px; background: transparent; border: 1px solid #FF6600; border-radius: 8px; color: #FFFFFF; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+.custom-input::placeholder { color: #CCCCCC; }
+.orange-btn { width: 100%; padding: 15px; background-color: #FF6600; color: #FFFFFF; border: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem; margin-top: 10px; cursor: pointer; }
+.back-btn { width: 100%; padding: 10px; background: transparent; color: #CCCCCC; border: none; margin-top: 10px; font-size: 1rem; cursor: pointer; }
+.service-cards-container { display: flex; gap: 10px; margin-bottom: 20px; }
+.service-card { flex: 1; text-align: center; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid transparent; color: #FFFFFF; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.service-card.active { border-color: #FF6600; background: rgba(255, 102, 0, 0.1); color: #FF6600;}
+/* JEEP ANIMATION */
+.jeep-anim { animation: driveJeep 2s ease-in-out infinite; }
+@keyframes driveJeep { 0% { transform: translateY(0px) rotate(0deg); } 25% { transform: translateY(-3px) rotate(-2deg); } 50% { transform: translateY(0px) rotate(0deg); } 75% { transform: translateY(-2px) rotate(2deg); } 100% { transform: translateY(0px) rotate(0deg); } }
 </style>
 </head>
 <body>
@@ -1790,6 +1811,66 @@
                 }
             });
         }
+function slideBookingForm(stepIndex) {
+    const track = document.getElementById('form-slider-track');
+    track.style.transform = `translateX(-${stepIndex * 33.333}%)`;
+}
+function openPremiumBookingModal(clinicName) {
+    const nameElement = document.getElementById('sheet-clinic-name');
+    if(nameElement) {
+       nameElement.innerHTML = clinicName + ' <span class="rating"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 4.8</span>';
+    }
+    document.getElementById('booking-bottom-sheet').classList.add('show');
+    document.getElementById('booking-overlay').style.display = 'block';
+    slideBookingForm(0); 
+}
+document.getElementById('close-sheet-btn').addEventListener('click', function() {
+    document.getElementById('booking-bottom-sheet').classList.remove('show');
+    document.getElementById('booking-overlay').style.display = 'none';
+});
+document.getElementById('booking-overlay').addEventListener('click', function() {
+    document.getElementById('booking-bottom-sheet').classList.remove('show');
+    document.getElementById('booking-overlay').style.display = 'none';
+});
     </script>
+    <div id="booking-overlay" class="modal-overlay"></div>
+<div id="booking-bottom-sheet" class="bottom-sheet">
+    <div class="sheet-header">
+        <h2 id="sheet-clinic-name">Store Name <span class="rating"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 4.8</span></h2>
+        <span id="close-sheet-btn" class="close-btn">&times;</span>
+    </div>
+    <div class="slider-viewport">
+        <div id="form-slider-track" class="slider-track">
+            >             <div class="slide-panel">
+                <h3 class="step-title">Pet Info</h3>
+                <input type="text" class="custom-input" placeholder="Pet Name">
+                <input type="text" class="custom-input" placeholder="Owner Name">
+                <button class="orange-btn next-btn" onclick="slideBookingForm(1)">Next</button>
+            </div>
+            >             <div class="slide-panel">
+                <h3 class="step-title">Select Service</h3>
+                <div class="service-cards-container">
+                    <div class="service-card active" id="card-clinic">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16M9 21v-5a2 2 0 012-2h2a2 2 0 012 2v5"/></svg>
+                        <p>At Clinic</p>
+                    </div>
+                    <div class="service-card" id="card-home">
+                        >                         <svg class="jeep-anim" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                        <p>Home Grooming</p>
+                    </div>
+                </div>
+                <button class="orange-btn next-btn" onclick="slideBookingForm(2)">Next</button>
+                <button class="back-btn" onclick="slideBookingForm(0)">Back</button>
+            </div>
+            >             <div class="slide-panel">
+                <h3 class="step-title">Date & Time</h3>
+                <input type="date" class="custom-input">
+                <input type="time" class="custom-input">
+                <button class="orange-btn confirm-btn">Confirm Booking</button>
+                <button class="back-btn" onclick="slideBookingForm(1)">Back</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
