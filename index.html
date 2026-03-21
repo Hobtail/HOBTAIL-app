@@ -103,8 +103,8 @@
         </div>
     </div>
 
-    <!-- Booking Bottom Sheet -->
-    <div class="bottom-sheet-overlay" id="booking-overlay"></div>
+    <!-- Booking Modal -->
+    <div class="bottom-sheet-overlay" id="booking-modal-overlay"></div>
     <div class="bottom-sheet-modal" id="booking-modal">
         <div class="booking-header">
             <h2>Book Appointment</h2>
@@ -160,45 +160,46 @@
         </div>
     </div>
 
-    <div id="booking-overlay" class="modal-overlay"></div>
-<div id="booking-bottom-sheet" class="bottom-sheet">
-    <div class="sheet-header">
-        <h2 id="sheet-clinic-name">Store Name <span class="rating"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFD700"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg> 4.8</span></h2>
-        <span id="close-sheet-btn" class="close-btn">&times;</span>
-    </div>
-    <div class="slider-viewport">
-        <div id="form-slider-track" class="slider-track">
-            >             <div class="slide-panel">
-                <h3 class="step-title">Pet Info</h3>
-                <input type="text" class="custom-input" placeholder="Pet Name">
-                <input type="text" class="custom-input" placeholder="Owner Name">
-                <button class="orange-btn next-btn" onclick="slideBookingForm(1)">Next</button>
-            </div>
-            >             <div class="slide-panel">
-                <h3 class="step-title">Select Service</h3>
-                <div class="service-cards-container">
-                    <div class="service-card active" id="card-clinic">
-                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16M9 21v-5a2 2 0 012-2h2a2 2 0 012 2v5"></path></svg>
-                        <p>At Clinic</p>
-                    </div>
-                    <div class="service-card" id="card-home">
-                        >                         <svg class="jeep-anim" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                        <p>Home Grooming</p>
-                    </div>
+    <!-- Premium Booking Bottom Sheet -->
+    <div id="premium-booking-overlay" class="modal-overlay"></div>
+    <div id="booking-bottom-sheet" class="bottom-sheet">
+        <div class="sheet-header">
+            <h2 id="sheet-clinic-name"></h2>
+            <span id="close-sheet-btn" class="close-btn">&times;</span>
+        </div>
+        <div class="slider-viewport">
+            <div id="form-slider-track" class="slider-track">
+                <div class="slide-panel">
+                    <h3 class="step-title">Pet Info</h3>
+                    <input type="text" class="custom-input" placeholder="Pet Name">
+                    <input type="text" class="custom-input" placeholder="Owner Name">
+                    <button class="orange-btn next-btn" onclick="slideBookingForm(1)">Next</button>
                 </div>
-                <button class="orange-btn next-btn" onclick="slideBookingForm(2)">Next</button>
-                <button class="back-btn" onclick="slideBookingForm(0)">Back</button>
-            </div>
-            >             <div class="slide-panel">
-                <h3 class="step-title">Date & Time</h3>
-                <input type="date" class="custom-input">
-                <input type="time" class="custom-input">
-                <button class="orange-btn confirm-btn">Confirm Booking</button>
-                <button class="back-btn" onclick="slideBookingForm(1)">Back</button>
+                <div class="slide-panel">
+                    <h3 class="step-title">Select Service</h3>
+                    <div class="service-cards-container">
+                        <div class="service-card active" id="card-clinic">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16M9 21v-5a2 2 0 012-2h2a2 2 0 012 2v5"></path></svg>
+                            <p>At Clinic</p>
+                        </div>
+                        <div class="service-card" id="card-home">
+                            <svg class="jeep-anim" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            <p>Home Grooming</p>
+                        </div>
+                    </div>
+                    <button class="orange-btn next-btn" onclick="slideBookingForm(2)">Next</button>
+                    <button class="back-btn" onclick="slideBookingForm(0)">Back</button>
+                </div>
+                <div class="slide-panel">
+                    <h3 class="step-title">Date & Time</h3>
+                    <input type="date" class="custom-input">
+                    <input type="time" class="custom-input">
+                    <button class="orange-btn confirm-btn">Confirm Booking</button>
+                    <button class="back-btn" onclick="slideBookingForm(1)">Back</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
     <script src="js/script.js"></script>
 </body>
 </html>
