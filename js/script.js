@@ -193,7 +193,7 @@ function renderFeed() {
                         <span>${store.address}</span>
                     </p>
                     ${distanceTag}
-                    <button class=\"view-btn\">View Details</button>
+                    <button class=\"view-btn\" onclick=\"event.stopPropagation(); openPremiumBookingModal(\'${store.name}\')\">Book Appointment</button>
                 </div>
             </article>
         `;
@@ -247,7 +247,7 @@ async function processLocation(position) {
                     </div>
                     <div class=\"top-card-distance-badge\">${store.distance} km away</div>
                 </div>
-                <button class=\"slider-view-btn\">View Details</button>
+                <button class=\"slider-view-btn\" onclick=\"event.stopPropagation(); openPremiumBookingModal(\'${store.name}\')\">Book Appointment</button>
             </div>
         `}).join('');
 
@@ -351,7 +351,7 @@ function openDetails(storeId) {
             </p>
             <h3>About Clinic</h3>
             <p class=\"about-text\" style=\"line-height: 1.6; color: var(--text-white-crisp); font-size: 0.95rem; margin-bottom: 30px;\">${store.about || 'Premium care for your beloved pets.'}</p>
-            <button class=\"book-btn\" onclick=\"openBookingModal('${store.id}')\">Book Appointment ${newPawIcon}</button>
+            <button class=\"book-btn\" onclick=\"openPremiumBookingModal(\'${store.name}\')\">Book Appointment ${newPawIcon}</button>
         </div>
     `;
 
@@ -658,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (filteredStores.length > 0) {
                 filteredStores.forEach(store => {
                     const regex = new RegExp(`(${searchWords.join('|')})`, 'gi');
-                    const highlightedName = store.name.replace(regex, '<span class=\"highlight\">$1</span>');
+                    const highlightedName = store.name.replace(regex, '<span class="highlight">$1</span>');
 
                     resultsHtml += `
                         <div class=\"micro-card\" data-store-id=\"${store.id}\">
