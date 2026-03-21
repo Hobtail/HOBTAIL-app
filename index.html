@@ -103,65 +103,8 @@
         </div>
     </div>
 
-    <!-- Booking Modal -->
-    <div class="bottom-sheet-overlay" id="booking-modal-overlay"></div>
-    <div class="bottom-sheet-modal" id="booking-modal">
-        <div class="booking-header">
-            <h2>Book Appointment</h2>
-            <svg id="close-booking-modal" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="close-icon"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </div>
-        <div class="form-slider-container">
-            <div class="form-slider-track">
-                <!-- Step 1: Pet & Owner Details -->
-                <div class="form-step">
-                    <form class="booking-form">
-                        <input type="text" placeholder="Pet Name" required>
-                        <input type="text" placeholder="Owner Name" required>
-                        <input type="tel" placeholder="Phone Number" required>
-                    </form>
-                    <div class="nav-button-container">
-                        <button class="slider-nav-btn next">Next</button>
-                    </div>
-                </div>
-
-                <!-- Step 2: Service Selection -->
-                <div class="form-step">
-                    <div class="service-toggle">
-                        <button class="toggle-btn active" id="clinic-toggle">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M5 21V7l7-5 7 5v14"></path><path d="M9 21v-8h6v8"></path></svg>
-                            At Clinic
-                        </button>
-                        <button class="toggle-btn" id="home-toggle">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                            At Home
-                        </button>
-                    </div>
-                    <div id="home-address-container" style="display: none;">
-                        <input type="text" placeholder="Home Address">
-                    </div>
-                    <div class="nav-button-container">
-                        <button class="slider-nav-btn back">Back</button>
-                        <button class="slider-nav-btn next">Next</button>
-                    </div>
-                </div>
-
-                <!-- Step 3: Date, Time & Confirm -->
-                <div class="form-step">
-                    <form class="booking-form">
-                        <input type="date" required>
-                        <input type="time" required>
-                    </form>
-                    <div class="nav-button-container">
-                        <button class="slider-nav-btn back">Back</button>
-                        <button class="confirm-booking-btn">Confirm Booking</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Premium Booking Bottom Sheet -->
-    <div id="premium-booking-overlay" class="modal-overlay"></div>
+    <div id="booking-overlay" class="modal-overlay"></div>
     <div id="booking-bottom-sheet" class="bottom-sheet">
         <div class="sheet-header">
             <h2 id="sheet-clinic-name"></h2>
